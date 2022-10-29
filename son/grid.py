@@ -22,9 +22,9 @@ class GridCell:
             pygame.draw.rect(destination_surface, (100, 100, 0), rect, width=1)
             print(self.pos)
 
-    def update(self, event: pygame.event.Event, delta):
+    def update_focus(self, mouse_pos, delta):
         rect = pygame.Rect(self.rect.left - delta[0], self.rect.top - delta[1], 50, 50)
-        self.focused = rect.collidepoint(event.pos)
+        self.focused = rect.collidepoint(mouse_pos)
 
 
 class Grid:
@@ -45,8 +45,7 @@ class Grid:
             for cell in row:
                 cell.draw(destination_surface, delta)
 
-    def update(self, event: pygame.event.Event, delta):
-        if event.type == pygame.MOUSEMOTION:
-            for row in self.array:
-                for cell in row:
-                    cell.update(event, delta)
+    def update_focus(self, mouse_pos, delta):
+        for row in self.array:
+            for cell in row:
+                cell.update_focus(mouse_pos, delta)

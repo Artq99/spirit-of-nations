@@ -19,13 +19,12 @@ class SpiritOfNationsApp:
         while True:
             mouse_pos = pygame.mouse.get_pos()
             screen_scroll_handler.update(mouse_pos)
+            grid.update_focus(mouse_pos, screen_scroll_handler.get_delta())
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
-                grid.update(event, screen_scroll_handler.get_delta())
 
             self.surface.fill((0, 0, 0))
             grid.draw(self.surface, screen_scroll_handler.get_delta())
