@@ -1,41 +1,32 @@
 import sys
 import pygame
 
+from son.screen_scroll import ScreenScrollHandler
 from son.grid import Grid
 
 
 class SpiritOfNationsApp:
 
-    def __init__(self):
+    def __init__(self, resolution):
         pygame.init()
-        pygame.display.set_mode((800, 600))
+        self.resolution = resolution
+        self.surface = pygame.display.set_mode(resolution)
 
     def run(self):
-        surface = pygame.display.get_surface()
-        screen_rect = surface.get_rect()
+        screen_scroll_handler = ScreenScrollHandler(self.resolution)
         grid = Grid((20, 20))
-
-        delta_x = 0
-        delta_y = 0
 
         while True:
             mouse_pos = pygame.mouse.get_pos()
-            if mouse_pos[0] <= 10:
-                delta_x = max((delta_x - 0.1), -50)
-            if mouse_pos[0] >= (screen_rect.size[0] - 10):
-                delta_x = min((delta_x + 0.1), screen_rect.size[0] + 50)
-            if mouse_pos[1] <= 10:
-                delta_y = max((delta_y - 0.1), -50)
-            if mouse_pos[1] >= (screen_rect.size[1] - 10):
-                delta_y = min((delta_y + 0.1), screen_rect.size[1] + 50)
-
-            surface.fill((0, 0, 0))
-            grid.draw(surface, (delta_x, delta_y))
-            pygame.display.flip()
+            screen_scroll_handler.update(mouse_pos)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
 
-                grid.update(event, (delta_x, delta_y))
+                grid.update(event, screen_scroll_handler.get_delta())
+
+            self.surface.fill((0, 0, 0))
+            grid.draw(self.surface, screen_scroll_handler.get_delta())
+            pygame.display.flip()
