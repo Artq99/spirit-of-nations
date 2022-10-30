@@ -2,6 +2,7 @@ import sys
 import pygame
 
 from son.screen_scroll import ScreenScrollHandler
+from son.resources import ResourceManager
 from son.grid import Grid
 
 
@@ -16,7 +17,10 @@ class SpiritOfNationsApp:
 
     def run(self):
         screen_scroll_handler = ScreenScrollHandler(self.resolution)
-        grid = Grid((20, 20))
+        resource_manager = ResourceManager()
+        resource_manager.load_resources()
+
+        grid = Grid((20, 20), resource_manager)
 
         while True:
             mouse_pos = pygame.mouse.get_pos()

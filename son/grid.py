@@ -1,16 +1,17 @@
 import pygame
 
+from son.resources import ResourceManager
+
 
 class GridCell:
 
-    def __init__(self, pos):
+    def __init__(self, pos, resource_manager: ResourceManager):
         self.pos = pos
         x = pos[0] * 50
         y = pos[1] * 50
+        self.resource_manager = resource_manager
         self.rect = pygame.Rect(x, y, 50, 50)
-        self.color = (0, 200, 0)
-        self.surface = pygame.surface.Surface((50, 50))
-        self.surface.fill(self.color)
+        self.surface = self.resource_manager.get_resource("grass")
 
         self.focused = False
 
@@ -29,13 +30,13 @@ class GridCell:
 
 class Grid:
 
-    def __init__(self, size):
+    def __init__(self, size, resource_manager):
         self.array = []
 
         for y in range(size[1]):
             row = []
             for x in range(size[0]):
-                cell = GridCell((x, y))
+                cell = GridCell((x, y), resource_manager)
                 row.append(cell)
 
             self.array.append(row)
