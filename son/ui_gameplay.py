@@ -4,6 +4,7 @@ from pygame.font import Font
 from pygame.event import Event
 from pygame.locals import *
 
+from son.types import CellInfo
 
 COLOR_TEXT = (255, 255, 255)
 COLOR_BACKGROUND = (15, 15, 15)
@@ -29,13 +30,13 @@ class UIController:
 
         return False
 
-    def draw(self, surface: Surface, mouse_pos: tuple, cell_info: dict) -> None:
+    def draw(self, surface: Surface, cell_info: CellInfo, mouse_pos: tuple) -> None:
         if self._is_cell_info_visible:
             self._show_cell_info(surface, cell_info, mouse_pos)
 
-    def _show_cell_info(self, surface, cell_info, mouse_pos):
-        cell_x, cell_y = cell_info["grid_pos"]
-        terrain = cell_info["type"]
+    def _show_cell_info(self, surface: Surface, cell_info: CellInfo, mouse_pos: tuple):
+        cell_x, cell_y = cell_info.grid_pos
+        terrain = cell_info.terrain_type
 
         position_text = "Position: {}:{}".format(cell_x, cell_y)
         position_surface = self._render_text(position_text)

@@ -6,15 +6,15 @@ MAX_SCROLL_OUT_OF_MAP = 50
 class ScreenScrollHandler:
     # TODO Something's not right with scrolling right and down
 
-    def __init__(self, resolution):
+    def __init__(self, resolution: tuple) -> None:
         self.resolution_x, self.resolution_y = resolution
         self.delta_x = 0
         self.delta_y = 0
 
-    def get_delta(self):
+    def get_delta(self) -> tuple:
         return self.delta_x, self.delta_y
 
-    def update(self, mouse_pos):
+    def update(self, mouse_pos: tuple) -> None:
         mouse_pos_x, mouse_pos_y = mouse_pos
         # Scrolling left
         if mouse_pos_x <= SCROLL_BORDER_SIZE:
