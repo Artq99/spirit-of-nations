@@ -9,8 +9,10 @@ class SpiritOfNationsApp:
 
     def __init__(self, resolution):
         pygame.init()
+        pygame.display.set_caption("Spirit of Nations")
         self.resolution = resolution
         self.surface = pygame.display.set_mode(resolution)
+        self.clock = pygame.time.Clock()
 
     def run(self):
         screen_scroll_handler = ScreenScrollHandler(self.resolution)
@@ -29,3 +31,4 @@ class SpiritOfNationsApp:
             self.surface.fill((0, 0, 0))
             grid.draw(self.surface, screen_scroll_handler.get_delta())
             pygame.display.flip()
+            self.clock.tick(30)
