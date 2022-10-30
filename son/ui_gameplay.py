@@ -31,7 +31,7 @@ class UIController:
         return False
 
     def draw(self, surface: Surface, cell_info: CellInfo, mouse_pos: tuple) -> None:
-        if self._is_cell_info_visible:
+        if self._is_cell_info_visible and cell_info is not None:
             self._show_cell_info(surface, cell_info, mouse_pos)
 
     def _show_cell_info(self, surface: Surface, cell_info: CellInfo, mouse_pos: tuple):

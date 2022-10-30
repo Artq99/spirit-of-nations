@@ -1,3 +1,5 @@
+import pygame.display
+
 SCROLL_SPEED = 5
 SCROLL_BORDER_SIZE = 10
 MAX_SCROLL_OUT_OF_MAP = 50
@@ -6,8 +8,8 @@ MAX_SCROLL_OUT_OF_MAP = 50
 class ScreenScrollHandler:
     # TODO Something's not right with scrolling right and down
 
-    def __init__(self, resolution: tuple) -> None:
-        self.resolution_x, self.resolution_y = resolution
+    def __init__(self) -> None:
+        self.resolution_x, self.resolution_y = pygame.display.get_window_size()
         self.delta_x = 0
         self.delta_y = 0
 
