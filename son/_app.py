@@ -4,8 +4,9 @@ import pygame
 from pygame.locals import *
 from pygame.time import Clock
 
-from son.resources import ResourceManager
-from son.scenes import SceneGameplay, SceneManager
+from son.core.scenes import SceneManager
+from son.gameplay import SceneGameplay
+from son.main_menu import SceneMainMenu
 
 
 class SpiritOfNationsApp:
@@ -16,10 +17,9 @@ class SpiritOfNationsApp:
         self._surface = pygame.display.set_mode(resolution)
         self._clock = Clock()
 
-        self._resource_manager = ResourceManager()
-        self._resource_manager.load_resources()
-
-        self._scene_manager = SceneManager(self._resource_manager)
+        self._scene_manager = SceneManager()
+        self._scene_manager.register_scene("MainMenu", SceneMainMenu)
+        self._scene_manager.register_scene("Gameplay", SceneGameplay)
 
     def run(self) -> None:
         self._scene_manager.load_scene("MainMenu")

@@ -1,9 +1,9 @@
 import pygame
-from pygame.locals import *
 from pygame import Surface
+from pygame.locals import *
 
-from son.resources import ResourceManager
-from son.types import CellInfo, GridUpdateFocusInfo
+from son.core.resources import ResourceManager
+from son.gameplay.types import CellInfo, GridUpdateFocusInfo
 
 GRID_CELL_SIZE = 50
 GRID_CELL_SIZE_XY = (GRID_CELL_SIZE, GRID_CELL_SIZE)
@@ -18,10 +18,10 @@ class GridCell:
         return grid_pos_x * GRID_CELL_SIZE, grid_pos_y * GRID_CELL_SIZE
 
     def __init__(self, grid_pos: tuple, resource_manager: ResourceManager) -> None:
-        self.grid_pos = grid_pos
+        self._grid_pos = grid_pos
 
-        self.terrain_type = "grass"
-        self.surface = resource_manager.get_resource("grass")
+        self._terrain_type = "grass"
+        self._surface = resource_manager.get_resource("grass")
 
         self._pixel_pos = GridCell._calc_pixel_pos(grid_pos)
 
@@ -33,13 +33,13 @@ class GridCell:
 
     def get_cell_info(self) -> CellInfo:
         return CellInfo(
-            grid_pos=self.grid_pos,
-            terrain_type=self.terrain_type
+            grid_pos=self._grid_pos,
+            terrain_type=self._terrain_type
         )
 
     def draw(self, destination_surface: Surface, delta: tuple) -> None:
         rect_delta = self.get_rect_with_delta(delta)
-        destination_surface.blit(self.surface, rect_delta)
+        destination_surface.blit(self._surface, rect_delta)
 
     def draw_focus_marker(self, destination_surface: Surface, delta: tuple) -> None:
         rect_delta = self.get_rect_with_delta(delta)

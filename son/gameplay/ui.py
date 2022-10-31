@@ -1,20 +1,20 @@
 import pygame
 from pygame import Surface
-from pygame.font import Font
 from pygame.event import Event
 from pygame.locals import *
 
-from son.types import CellInfo
+from son.core.ui.controller import UIController
+from son.gameplay.types import CellInfo
 
 COLOR_TEXT = (255, 255, 255)
 COLOR_BACKGROUND = (15, 15, 15)
 FONT_SIZE = 16
 
 
-class UIController:
+class UIGameplayController(UIController):
 
     def __init__(self) -> None:
-        self.font = Font(pygame.font.get_default_font(), FONT_SIZE)
+        super().__init__()
 
         self._is_cell_info_visible = False
 
@@ -39,10 +39,10 @@ class UIController:
         terrain = cell_info.terrain_type
 
         position_text = "Position: {}:{}".format(cell_x, cell_y)
-        position_surface = self._render_text(position_text)
+        position_surface = self.create_text_surface(position_text)
 
         terrain_text = "Terrain: {}".format(terrain)
-        terrain_surface = self._render_text(terrain_text)
+        terrain_surface = self.create_text_surface(terrain_text)
 
         terrain_surface_size_x, terrain_surface_size_y = terrain_surface.get_size()
         terrain_surface_x, terrain_surface_y = terrain_surface.get_size()
@@ -57,6 +57,3 @@ class UIController:
         info_surface.blit(terrain_surface, (10, 10 + terrain_surface_size_y + 5))
 
         surface.blit(info_surface, mouse_pos)
-
-    def _render_text(self, text: str) -> Surface:
-        return self.font.render(text, True, COLOR_TEXT, COLOR_BACKGROUND)

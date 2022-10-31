@@ -1,11 +1,14 @@
 import os
+from dataclasses import dataclass
 
 import pygame
+from pygame import Surface
 
-# TODO Move this to an XML file
-RESOURCE_LIST = [
-    {"name": "grass", "file": "grass.png"}
-]
+
+@dataclass
+class ResourceInfo:
+    name: str
+    file: str
 
 
 class ResourceNotFoundError(Exception):
@@ -16,16 +19,17 @@ class ResourceNotFoundError(Exception):
 
 class ResourceManager:
 
-    def __init__(self) -> None:
+    def __init__(self, resource_list: list) -> None:
+        self.resource_list = resource_list
         self._resources = dict()
 
     def load_resources(self) -> None:
-        for resource in RESOURCE_LIST:
-            path = os.path.join("data", resource["file"])
+        for resource in self.resource_list:
+            path = os.path.join("data", resource.file)
             file = pygame.image.load(path)
-            self._resources[resource["name"]] = file
+            self._resources[resource.name] = file
 
-    def get_resource(self, name: str) -> None:
+    def get_resource(self, name: str) -> Surface:
         try:
             return self._resources[name]
         except KeyError:

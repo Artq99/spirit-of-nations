@@ -1,4 +1,4 @@
-import pygame.display
+import pygame
 
 SCROLL_SPEED = 5
 SCROLL_BORDER_SIZE = 10
