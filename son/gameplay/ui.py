@@ -3,6 +3,7 @@ from pygame import Surface
 from pygame.event import Event
 from pygame.locals import *
 
+from son.core.scenes import SceneBase
 from son.core.ui.controller import UIController
 from son.gameplay.types import CellInfo
 
@@ -11,10 +12,11 @@ COLOR_BACKGROUND = (15, 15, 15)
 FONT_SIZE = 16
 
 
+# TODO Refactor
 class UIGameplayController(UIController):
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, owner: SceneBase) -> None:
+        super().__init__(owner)
 
         self._is_cell_info_visible = False
 
