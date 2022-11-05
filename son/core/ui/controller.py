@@ -69,6 +69,14 @@ class UIController(Lifecycle):
         """
         self._widgets.append(widget)
 
+    def remove_widget(self, widget: UIWidget) -> None:
+        """
+        Remove a widget from this controller.
+
+        :param widget: widget to be removed
+        """
+        self._widgets.remove(widget)
+
     # TODO The method should be refactored into a function outside of this class
     def create_text_surface(self, text: str) -> Surface:
         return self._font.render(text, True, COLOR_TEXT, COLOR_BACKGROUND)

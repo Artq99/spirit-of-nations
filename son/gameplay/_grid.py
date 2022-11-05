@@ -1,7 +1,9 @@
 import pygame
 from pygame import Surface
+from pygame.event import Event
 from pygame.locals import *
 
+from son.core.events import SHOW_CELL_INFO
 from son.core.resources import ResourceManager
 from son.gameplay.types import CellInfo, GridUpdateFocusInfo
 
@@ -101,6 +103,10 @@ class Grid:
         return GridUpdateFocusInfo(
             focused_cell_info=self._focused_cell.get_cell_info() if self._focused_cell is not None else None
         )
+
+    def handle_event(self, event: Event, *args, **kwargs):
+        if event.type == MOUSEBUTTONUP and event.button == 1 and self._focused_cell is not None:
+            pygame.event.post(Event(SHOW_CELL_INFO, {"cell_info": self._focused_cell.get_cell_info()}))
 
     def draw(self, destination_surface: Surface, delta: tuple) -> None:
         for row in self._array:
