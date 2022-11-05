@@ -10,10 +10,16 @@ from son.gameplay.types import GridUpdateFocusInfo
 from son.gameplay.ui import UIGameplayController
 
 
+RESOURCE_LIST = [
+    ResourceInfo(name="grass", file="grass.png"),
+    ResourceInfo(name="tribe", file="tribe.png")
+]
+
+
 class SceneGameplay(SceneBase):
     def __init__(self) -> None:
         super().__init__()
-        self._resource_manager = ResourceManager([ResourceInfo(name="grass", file="grass.png")])
+        self._resource_manager = ResourceManager(RESOURCE_LIST)
         self._resource_manager.load_resources()
 
         self._screen_scroll_handler = ScreenScrollHandler()

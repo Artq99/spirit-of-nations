@@ -10,6 +10,18 @@ GRID_CELL_SIZE_XY = (GRID_CELL_SIZE, GRID_CELL_SIZE)
 COLOR_FOCUS = (100, 100, 0)
 
 
+class GameObject:
+
+    def __init__(self, parent: object, resource_manager: ResourceManager):
+        self._parent = parent
+        self._surface = resource_manager.get_resource("tribe")
+
+    def draw(self, destination_surface: Surface, parent_rect_delta: Rect):
+        rect = self._surface.get_rect()
+        rect.center = parent_rect_delta.center
+        destination_surface.blit(self._surface, rect)
+
+
 class GridCell:
 
     @staticmethod
@@ -22,6 +34,8 @@ class GridCell:
 
         self._terrain_type = "grass"
         self._surface = resource_manager.get_resource("grass")
+
+        self._game_objects = list()
 
         self._pixel_pos = GridCell._calc_pixel_pos(grid_pos)
 
@@ -41,9 +55,15 @@ class GridCell:
         rect_delta = self.get_rect_with_delta(delta)
         destination_surface.blit(self._surface, rect_delta)
 
+        for game_object in self._game_objects:
+            game_object.draw(destination_surface, rect_delta)
+
     def draw_focus_marker(self, destination_surface: Surface, delta: tuple) -> None:
         rect_delta = self.get_rect_with_delta(delta)
         pygame.draw.rect(destination_surface, COLOR_FOCUS, rect_delta, width=1)
+
+    def add_game_object(self, game_object: GameObject):
+        self._game_objects.append(game_object)
 
 
 class Grid:
@@ -65,6 +85,9 @@ class Grid:
     def __init__(self, size: tuple, resource_manager: ResourceManager) -> None:
         self._array = Grid._create_array(size, resource_manager)
         self._focused_cell: GridCell or None = None
+
+        cell: GridCell = self._array[5][5]
+        cell.add_game_object(GameObject(cell, resource_manager))
 
     def pre_update(self) -> None:
         self._focused_cell = None
