@@ -1,104 +1,12 @@
-from abc import ABC
-
 import pygame
 from pygame import Surface
 from pygame.event import Event
 from pygame.locals import *
 
-from son.core.ui.controller import UIController
+from son.core.ui._widgets_base import UIWidget
 from son.core.ui.constants import *
+from son.core.ui.controller import UIController
 from son.core.utils.decorators import override
-
-
-class UIWidget:
-    """
-    Abstract base class for all UI widgets.
-
-    In the inheriting classes remember to call _update_surface() in the __init__ method after the super() call.
-    """
-
-    def __init__(self, owner: UIController) -> None:
-        self._owner = owner
-        self._surface = Surface((0, 0))
-        self._rect = self._surface.get_rect()
-
-    def _create_surface(self) -> Surface:
-        raise NotImplementedError("UIWidget is an abstract base class.")
-
-    def _update_surface(self) -> None:
-        self._surface = self._create_surface()
-        self._rect.size = self._surface.get_size()
-
-    @property
-    def owner(self) -> UIController:
-        """
-        The owner of the widget.
-        """
-        return self._owner
-
-    @property
-    def surface(self) -> Surface:
-        """
-        The surface of the widget.
-        """
-        return self._surface
-
-    @property
-    def rect(self) -> Rect:
-        """
-        Rect of the widget.
-        """
-        return self._rect.copy()
-
-    @property
-    def pos(self):
-        """
-        Position of the widget.
-        """
-        return self.rect.topleft
-
-    @pos.setter
-    def pos(self, value):
-        self._rect.topleft = value
-
-    def pre_update(self, *args, **kwargs) -> None:
-        """
-        Lifecycle hook: Pre-Update
-
-        :param args: any arguments
-        :param kwargs: any keyword arguments
-        """
-        pass
-
-    def update(self, mouse_pos: tuple, *args, **kwargs) -> None:
-        """
-        Lifecycle hook: Update
-
-        :param mouse_pos: mouse position
-        :param args: any arguments
-        :param kwargs: any keyword arguments
-        """
-        pass
-
-    def handle_event(self, event: Event, *args, **kwargs) -> bool:
-        """
-        Lifecycle hook: Handle event
-
-        :param event: event to handle
-        :param args: any arguments
-        :param kwargs: any keyword arguments
-        """
-        return False
-
-    def draw(self, destination_surface: Surface, *args, **kwargs) -> None:
-        """
-        Lifecycle hook: Draw
-
-        :param destination_surface: surface the widget should be drawn on
-        :param args: any arguments
-        :param kwargs: any keyword arguments
-        """
-        pass
 
 
 class Box(UIWidget):
@@ -112,7 +20,7 @@ class Box(UIWidget):
         self._surface_padding = Surface((0, 0))
 
         self._widgets = list[UIWidget]()
-        self._padding = 5
+        self._padding = DEFAULT_PADDING
 
         self._update_surface()
 
@@ -236,6 +144,7 @@ class Label(UIWidget):
 
     @override
     def _create_surface(self) -> Surface:
+        # TODO Change when the method is refactored into a function
         text_surface = self.owner.create_text_surface(self.text)
         text_surface_size_x, text_surface_size_y = text_surface.get_size()
 

@@ -23,7 +23,7 @@ class MainMenuUIController(UIController):
         box.add_widget(label)
         box.add_widget(button)
 
-        self.widgets.append(box)
+        self.add_widget(box)
 
 
 def callback_button_new_game_on_click(scene: SceneBase):
