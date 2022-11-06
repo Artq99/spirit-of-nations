@@ -17,27 +17,25 @@ class SpiritOfNationsApp:
         self._surface = pygame.display.set_mode(resolution)
         self._clock = Clock()
 
-        self._scene_manager = SceneManager()
+        self._scene_manager = SceneManager(initial_scene_name="MainMenu")
         self._scene_manager.register_scene("MainMenu", SceneMainMenu)
         self._scene_manager.register_scene("Gameplay", SceneGameplay)
 
     def run(self) -> None:
-        self._scene_manager.load_scene("MainMenu")
-
         while True:
-            self._scene_manager.active_scene.pre_update()
-            self._scene_manager.active_scene.update()
+            self._scene_manager.pre_update()
+
+            mouse_pos = pygame.mouse.get_pos()
+            self._scene_manager.update(mouse_pos)
 
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
 
-                self._scene_manager.active_scene.handle_event(event)
+                self._scene_manager.handle_event(event)
 
-            self._scene_manager.active_scene.draw(self._surface)
+            self._scene_manager.draw(self._surface)
 
             pygame.display.flip()
             self._clock.tick(30)
-
-            self._scene_manager.handle_scene_finish()

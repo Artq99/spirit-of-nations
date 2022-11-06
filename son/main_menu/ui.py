@@ -1,4 +1,4 @@
-from son.core.scenes import SceneBase
+from son.core.scenes import SceneBase, finish_scene
 from son.core.ui.controller import UIController
 from son.core.ui.widgets import Button, Label, Box
 
@@ -27,5 +27,4 @@ class MainMenuUIController(UIController):
 
 
 def callback_button_new_game_on_click(scene: SceneBase):
-    scene.has_finished = True
-    scene.next_scene_name = "Gameplay"
+    finish_scene(next_scene_name="Gameplay")

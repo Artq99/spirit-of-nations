@@ -1,47 +1,85 @@
+from typing import Type
+
+import pygame.event
 from pygame import Surface
 from pygame.event import Event
 
+from son.core.base import Lifecycle
+from son.core.events import SCENE_FINISHED
+from son.core.utils.decorators import override
 
-class SceneBase:
 
-    def __init__(self) -> None:
-        self.has_finished = False
-        self.next_scene_name = None
+def finish_scene(next_scene_name: str = "") -> None:
+    """
+    Finish the current scene.
 
-    def pre_update(self, *args, **kwargs) -> None:
-        pass
+    :param next_scene_name: name of a scene that should be loaded as next
+    """
+    pygame.event.post(Event(SCENE_FINISHED, {"next_scene_name": next_scene_name}))
 
-    def update(self, *args, **kwargs) -> None:
-        pass
 
-    def handle_event(self, event: Event, *args, **kwargs) -> None:
-        pass
-
-    def draw(self, surface: Surface, *args, **kwargs) -> None:
-        pass
+class SceneBase(Lifecycle):
+    """
+    Base class for all scenes.
+    """
+    pass
 
 
 class SceneNotRegisteredError(Exception):
+    """
+    Error raised on attempt of loading a scene that has not been registered.
+    """
 
     def __init__(self, scene_name: str) -> None:
         super().__init__("The scene has not been registered: {}".format(scene_name))
 
 
-class SceneManager:
-    def __init__(self):
-        self._registered_scenes = dict()
-        self.active_scene = SceneBase()
+class SceneManager(Lifecycle):
+    """
+    Scene Manager.
+    """
 
-    def register_scene(self, name: str, scene: object) -> None:
-        self._registered_scenes[name] = scene
+    def __init__(self, initial_scene_name=""):
+        self._registered_scenes = dict[str, Type[SceneBase]]()
+        self._active_scene: Type[SceneBase]
+        self._next_scene_name: str or None = initial_scene_name
 
-    def load_scene(self, name: str) -> None:
+    @override
+    def pre_update(self, *args, **kwargs) -> None:
+        if self._next_scene_name is not None:
+            self._load_scene(self._next_scene_name)
+            self._next_scene_name = None
+
+        self._active_scene.pre_update(*args, **kwargs)
+
+    def _load_scene(self, name: str) -> None:
         if name not in self._registered_scenes.keys():
             raise SceneNotRegisteredError(name)
 
-        scene_cls = self._registered_scenes[name]
-        self.active_scene = scene_cls()
+        scene_class = self._registered_scenes[name]
+        self._active_scene = scene_class()
 
-    def handle_scene_finish(self) -> None:
-        if self.active_scene.has_finished:
-            self.load_scene(self.active_scene.next_scene_name)
+    @override
+    def update(self, mouse_pos: tuple, *args, **kwargs) -> None:
+        self._active_scene.update(mouse_pos, *args, **kwargs)
+
+    @override
+    def handle_event(self, event: Event, *args, **kwargs) -> bool:
+        if event.type == SCENE_FINISHED:
+            self._next_scene_name = event.next_scene_name
+            return True
+
+        return self._active_scene.handle_event(event, *args, **kwargs)
+
+    @override
+    def draw(self, destination_surface: Surface, *args, **kwargs) -> None:
+        self._active_scene.draw(destination_surface, *args, **kwargs)
+
+    def register_scene(self, name: str, scene_class: Type[SceneBase]) -> None:
+        """
+        Register a scene.
+
+        :param name: name for a new scene
+        :param scene_class: class of a new scene
+        """
+        self._registered_scenes[name] = scene_class
