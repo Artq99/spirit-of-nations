@@ -4,6 +4,8 @@ from dataclasses import dataclass
 import pygame
 from pygame import Surface
 
+# TODO refactoring
+
 
 @dataclass
 class ResourceInfo:

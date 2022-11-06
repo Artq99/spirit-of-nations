@@ -16,11 +16,10 @@ class Lifecycle:
         """
         pass
 
-    def update(self, mouse_pos: tuple, *args, **kwargs) -> None:
+    def update(self, *args, **kwargs) -> None:
         """
         Lifecycle hook: Update
 
-        :param mouse_pos: mouse position
         :param args: any arguments
         :param kwargs: any keyword arguments
         """
@@ -40,7 +39,7 @@ class Lifecycle:
         """
         Lifecycle hook: Draw
 
-        :param destination_surface: surface the widget should be drawn on
+        :param destination_surface: surface the object should be drawn on
         :param args: any arguments
         :param kwargs: any keyword arguments
         """

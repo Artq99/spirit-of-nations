@@ -10,10 +10,14 @@ from son.main_menu import SceneMainMenu
 
 
 class SpiritOfNationsApp:
+    """
+    Application: Spirit of Nations.
+    """
 
-    def __init__(self, resolution: tuple) -> None:
+    def __init__(self, resolution: tuple[int, int]) -> None:
         pygame.init()
         pygame.display.set_caption("Spirit of Nations")
+
         self._surface = pygame.display.set_mode(resolution)
         self._clock = Clock()
 
@@ -24,9 +28,7 @@ class SpiritOfNationsApp:
     def run(self) -> None:
         while True:
             self._scene_manager.pre_update()
-
-            mouse_pos = pygame.mouse.get_pos()
-            self._scene_manager.update(mouse_pos)
+            self._scene_manager.update()
 
             for event in pygame.event.get():
                 if event.type == QUIT:

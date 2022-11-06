@@ -10,8 +10,7 @@ class UIWidget(Lifecycle):
     In the inheriting classes remember to call _update_surface() in the __init__ method after the super() call.
     """
 
-    def __init__(self, owner: object) -> None:
-        self._owner = owner
+    def __init__(self) -> None:
         self._surface = Surface((0, 0))
         self._rect = self._surface.get_rect()
 
@@ -21,13 +20,6 @@ class UIWidget(Lifecycle):
     def _update_surface(self) -> None:
         self._surface = self._create_surface()
         self._rect.size = self._surface.get_size()
-
-    @property
-    def owner(self) -> object:
-        """
-        The owner of the widget.
-        """
-        return self._owner
 
     @property
     def surface(self) -> Surface:

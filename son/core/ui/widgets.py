@@ -3,9 +3,9 @@ from pygame import Surface
 from pygame.event import Event
 from pygame.locals import *
 
+from son.core.ui._text import create_text
 from son.core.ui._widgets_base import UIWidget
 from son.core.ui.constants import *
-from son.core.ui.controller import UIController
 from son.core.utils.decorators import override
 
 
@@ -14,8 +14,8 @@ class Box(UIWidget):
     Box with a background.
     """
 
-    def __init__(self, owner: UIController):
-        super().__init__(owner)
+    def __init__(self):
+        super().__init__()
 
         self._surface_padding = Surface((0, 0))
 
@@ -82,20 +82,26 @@ class Box(UIWidget):
             widget.pre_update(*args, **kwargs)
 
     @override
-    def update(self, mouse_pos: tuple, *args, **kwargs) -> None:
-        delta_x = self.rect.left + self.padding
-        delta_y = self.rect.top + self.padding
-        mouse_pos_with_delta = mouse_pos[0] - delta_x, mouse_pos[1] - delta_y
+    def update(self, *args, **kwargs) -> None:
         for widget in self.widgets:
-            widget.update(mouse_pos_with_delta, *args, **kwargs)
+            widget.update(*args, **kwargs)
 
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
+        event_to_process = event
+        if event.type == MOUSEMOTION:
+            event_to_process = Event(MOUSEMOTION, {"pos": self._calc_mouse_pos_with_delta(event.pos)})
+
         for widget in self.widgets:
-            if widget.handle_event(event, *args, **kwargs):
+            if widget.handle_event(event_to_process, *args, **kwargs):
                 return True
 
         return False
+
+    def _calc_mouse_pos_with_delta(self, mouse_pos: tuple[int, int]):
+        delta_x = self.rect.left + self.padding
+        delta_y = self.rect.top + self.padding
+        return mouse_pos[0] - delta_x, mouse_pos[1] - delta_y
 
     @override
     def draw(self, destination_surface: Surface, *args, **kwargs) -> None:
@@ -122,8 +128,8 @@ class Label(UIWidget):
     Simple label.
     """
 
-    def __init__(self, owner: UIController) -> None:
-        super().__init__(owner)
+    def __init__(self) -> None:
+        super().__init__()
 
         self._text = "Label text"
 
@@ -145,7 +151,7 @@ class Label(UIWidget):
     @override
     def _create_surface(self) -> Surface:
         # TODO Change when the method is refactored into a function
-        text_surface = self.owner.create_text_surface(self.text)
+        text_surface = create_text(self.text)
         text_surface_size_x, text_surface_size_y = text_surface.get_size()
 
         surface_size = (text_surface_size_x + 10, text_surface_size_y + 10)
@@ -166,8 +172,8 @@ class Button(Label):
     Button.
     """
 
-    def __init__(self, owner: UIController) -> None:
-        super().__init__(owner)
+    def __init__(self) -> None:
+        super().__init__()
 
         self._is_focused = False
 
@@ -183,14 +189,16 @@ class Button(Label):
         return self._is_focused
 
     @override
-    def update(self, mouse_pos: tuple, *args, **kwargs) -> None:
-        self._is_focused = self.rect.collidepoint(mouse_pos)
-
-    @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
-        if self._on_click is not None and self.is_focused and event.type == MOUSEBUTTONUP and event.button == 1:
-            self._on_click(*self._on_click_args, **self._on_click_kwargs)
-            return True
+        if event.type == MOUSEMOTION:
+            self._is_focused = self.rect.collidepoint(event.pos)
+            if self._is_focused:
+                return True
+
+        elif event.type == MOUSEBUTTONUP and event.button == 1:
+            if self._on_click is not None and self.is_focused:
+                self._on_click(*self._on_click_args, **self._on_click_kwargs)
+                return True
 
         return False
 

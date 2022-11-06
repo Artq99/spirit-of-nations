@@ -21,7 +21,7 @@ class SceneGameplay(SceneBase):
         self._resource_manager.load_resources()
 
         self._screen_scroll_handler = ScreenScrollHandler()
-        self._ui_controller = UIGameplayController(self)
+        self._ui_controller = UIGameplayController()
 
         self._grid = Grid((20, 20), self._resource_manager)
 

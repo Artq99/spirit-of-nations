@@ -60,8 +60,8 @@ class SceneManager(Lifecycle):
         self._active_scene = scene_class()
 
     @override
-    def update(self, mouse_pos: tuple, *args, **kwargs) -> None:
-        self._active_scene.update(mouse_pos, *args, **kwargs)
+    def update(self, *args, **kwargs) -> None:
+        self._active_scene.update(*args, **kwargs)
 
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
