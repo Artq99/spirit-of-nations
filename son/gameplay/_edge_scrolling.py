@@ -6,7 +6,7 @@ from son.core.base import Lifecycle
 from son.core.events import EDGE_SCROLL
 from son.core.utils.decorators import override
 
-SCROLL_SPEED = 5
+SCROLL_SPEED = 500
 SCROLL_BORDER_SIZE = 10
 MAX_SCROLL_OUT_OF_MAP = 50
 
@@ -30,20 +30,20 @@ class EdgeScrollingController(Lifecycle):
 
     @override
     def update(self, *args, **kwargs) -> None:
-        # TODO apply time delta
+        time_delta: float = kwargs["time_delta"]
         if self._delta_change[0] != 0 or self._delta_change[1] != 0:
             delta_x, delta_y = self._delta
             delta_change_x, delta_change_y = self._delta_change
 
             if delta_change_x == -1:
-                delta_x = max((delta_x - SCROLL_SPEED), -MAX_SCROLL_OUT_OF_MAP)
+                delta_x = max((delta_x - (SCROLL_SPEED * time_delta)), -MAX_SCROLL_OUT_OF_MAP)
             elif delta_change_x == 1:
-                delta_x = min((delta_x + SCROLL_SPEED), self._max_scroll_right)
+                delta_x = min((delta_x + (SCROLL_SPEED * time_delta)), self._max_scroll_right)
 
             if delta_change_y == -1:
-                delta_y = max((delta_y - SCROLL_SPEED), -MAX_SCROLL_OUT_OF_MAP)
+                delta_y = max((delta_y - (SCROLL_SPEED * time_delta)), -MAX_SCROLL_OUT_OF_MAP)
             elif delta_change_y == 1:
-                delta_y = min((delta_y + SCROLL_SPEED), self._max_scroll_bottom)
+                delta_y = min((delta_y + (SCROLL_SPEED * time_delta)), self._max_scroll_bottom)
 
             self._delta = delta_x, delta_y
             mouse_pos = pygame.mouse.get_pos()

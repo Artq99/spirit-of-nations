@@ -150,7 +150,6 @@ class Label(UIWidget):
 
     @override
     def _create_surface(self) -> Surface:
-        # TODO Change when the method is refactored into a function
         text_surface = create_text(self.text)
         text_surface_size_x, text_surface_size_y = text_surface.get_size()
 

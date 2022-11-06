@@ -11,7 +11,7 @@ class MapObject(Lifecycle):
     Base class for all map objects.
     """
 
-    def __init__(self, resource_manager: ResourceManager):
+    def __init__(self, resource_manager: ResourceManager) -> None:
         # TODO surface hardcoded for now
         self._surface = resource_manager.get_resource("tribe")
 

@@ -27,8 +27,10 @@ class SpiritOfNationsApp:
 
     def run(self) -> None:
         while True:
+            time_delta = self._clock.tick(30) * 0.001
+
             self._scene_manager.pre_update()
-            self._scene_manager.update()
+            self._scene_manager.update(time_delta=time_delta)
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -40,4 +42,3 @@ class SpiritOfNationsApp:
             self._scene_manager.draw(self._surface)
 
             pygame.display.flip()
-            self._clock.tick(30)
