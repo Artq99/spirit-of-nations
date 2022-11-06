@@ -5,7 +5,7 @@ from son.core.events import SHOW_CELL_INFO
 from son.core.ui.controller import UIController
 from son.core.ui.widgets import Box, Label, Button
 from son.core.utils.decorators import override
-from son.gameplay.types import CellInfo
+from son.gameplay._types import CellInfo
 
 
 class _BoxCellInfoController:
@@ -32,18 +32,9 @@ class _BoxCellInfoController:
         """
         return self._box
 
-    def update(self, **kwargs):
-        """
-        Update the controller.
-
-        :param kwargs: keyword arguments
-        """
-        if "focused_cell_info" in kwargs.keys():
-            self._info = kwargs["focused_cell_info"]
-
-    def _create_box(self) -> Box:
+    def _create_box(self, pos: tuple[int, int]) -> Box:
         box = Box()
-        box.pos = (5, 5)
+        box.pos = pos
 
         label_terrain_type = Label()
         label_terrain_type.text = "Terrain: {}".format(self._info.terrain_type)
@@ -64,17 +55,18 @@ class _BoxCellInfoController:
 
         return box
 
-    def show_box(self) -> None:
+    def show_box(self, cell_info: CellInfo, pos: tuple[int, int]) -> None:
         """
         Show the box on the screen.
         """
+        self._info = cell_info
+
         if self.box in self.owner.widgets:
             self.owner.remove_widget(self.box)
 
         if self._info is not None:
-            self._box = self._create_box()
-
-        self.owner.add_widget(self.box)
+            self._box = self._create_box(pos)
+            self.owner.add_widget(self.box)
 
     def hide_box(self) -> None:
         """
@@ -99,18 +91,12 @@ class UIGameplayController(UIController):
         self._box_cell_info_controller = _BoxCellInfoController(self)
 
     @override
-    def update(self, mouse_pos: tuple, *args, **kwargs) -> None:
-        super().update(mouse_pos, *args, **kwargs)
-
-        self._box_cell_info_controller.update(**kwargs)
-
-    @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
         if super().handle_event(event, *args, **kwargs):
             return True
 
         if event.type == SHOW_CELL_INFO:
-            self._box_cell_info_controller.show_box()
+            self._box_cell_info_controller.show_box(event.cell_info, event.pos)
             return True
 
         if event.type == MOUSEBUTTONUP and event.button == 3:

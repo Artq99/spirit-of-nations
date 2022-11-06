@@ -18,7 +18,7 @@ class SpiritOfNationsApp:
         pygame.init()
         pygame.display.set_caption("Spirit of Nations")
 
-        self._surface = pygame.display.set_mode(resolution)
+        self._surface = pygame.display.set_mode(resolution, flags=SCALED)
         self._clock = Clock()
 
         self._scene_manager = SceneManager(initial_scene_name="MainMenu")
