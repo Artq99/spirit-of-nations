@@ -2,7 +2,7 @@ from pygame import Surface
 from pygame.event import Event
 
 from son.core.base import Lifecycle
-from son.core.ui._widgets_base import UIWidget
+from son.core.ui._widgets_base import UIWidget, UIWidgetsList
 from son.core.utils.decorators import override
 
 
@@ -12,10 +12,10 @@ class UIController(Lifecycle):
     """
 
     def __init__(self) -> None:
-        self._widgets = list[UIWidget]()
+        self._widgets: UIWidgetsList = list()
 
     @property
-    def widgets(self) -> list[UIWidget]:
+    def widgets(self) -> UIWidgetsList:
         """
         List of widgets owned by this controller.
 

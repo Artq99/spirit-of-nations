@@ -1,3 +1,5 @@
+from typing import List, Type
+
 from pygame import Surface, Rect
 
 from son.core.base import Lifecycle
@@ -45,3 +47,6 @@ class UIWidget(Lifecycle):
     @pos.setter
     def pos(self, value):
         self._rect.topleft = value
+
+
+UIWidgetsList = List[UIWidget]

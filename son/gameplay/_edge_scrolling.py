@@ -5,6 +5,7 @@ from pygame.locals import *
 from son.core.base import Lifecycle
 from son.core.events import EDGE_SCROLL
 from son.core.utils.decorators import override
+from son.core.vectors import VectorInt2D
 
 SCROLL_SPEED = 500
 SCROLL_BORDER_SIZE = 10
@@ -16,11 +17,11 @@ class EdgeScrollingController(Lifecycle):
     Controller for edge scrolling.
     """
 
-    def __init__(self, map_pixel_size: tuple[int, int]) -> None:
+    def __init__(self, map_pixel_size: VectorInt2D) -> None:
         resolution = pygame.display.get_window_size()
 
-        self._delta: tuple[int, int] = (0, 0)
-        self._delta_change: tuple[int, int] = (0, 0)
+        self._delta: VectorInt2D = (0, 0)
+        self._delta_change: VectorInt2D = (0, 0)
 
         self._right_edge = resolution[0] - SCROLL_BORDER_SIZE
         self._bottom_edge = resolution[1] - SCROLL_BORDER_SIZE

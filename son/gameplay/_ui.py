@@ -5,6 +5,7 @@ from son.core.events import SHOW_CELL_INFO
 from son.core.ui.controller import UIController
 from son.core.ui.widgets import Box, Label, Button
 from son.core.utils.decorators import override
+from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo
 
 
@@ -32,7 +33,7 @@ class _BoxCellInfoController:
         """
         return self._box
 
-    def _create_box(self, pos: tuple[int, int]) -> Box:
+    def _create_box(self, pos: VectorInt2D) -> Box:
         box = Box()
         box.pos = pos
 
@@ -55,7 +56,7 @@ class _BoxCellInfoController:
 
         return box
 
-    def show_box(self, cell_info: CellInfo, pos: tuple[int, int]) -> None:
+    def show_box(self, cell_info: CellInfo, pos: VectorInt2D) -> None:
         """
         Show the box on the screen.
         """

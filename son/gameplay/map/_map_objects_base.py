@@ -1,3 +1,5 @@
+from typing import List
+
 from pygame import Surface
 from pygame.rect import Rect
 
@@ -22,3 +24,6 @@ class MapObject(Lifecycle):
         rect = self._surface.get_rect()
         rect.center = cell_rect.center
         destination_surface.blit(self._surface, rect)
+
+
+MapObjectsList = List[MapObject]

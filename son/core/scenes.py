@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Dict
 
 import pygame.event
 from pygame import Surface
@@ -39,9 +39,9 @@ class SceneManager(Lifecycle):
     Scene Manager.
     """
 
-    def __init__(self, initial_scene_name=""):
-        self._registered_scenes = dict[str, Type[SceneBase]]()
-        self._active_scene: Type[SceneBase]
+    def __init__(self, initial_scene_name: str = ""):
+        self._registered_scenes: Dict[str, Type[SceneBase]] = dict()
+        self._active_scene: SceneBase
         self._next_scene_name: str or None = initial_scene_name
 
     @override

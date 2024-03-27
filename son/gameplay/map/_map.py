@@ -1,3 +1,5 @@
+from typing import List
+
 import pygame
 from pygame import Surface
 from pygame.event import Event
@@ -7,9 +9,10 @@ from son.core.base import Lifecycle
 from son.core.events import EDGE_SCROLL, SHOW_CELL_INFO
 from son.core.resources import ResourceManager, ResourceInfo
 from son.core.utils.decorators import override
+from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo, MapInfo
 from son.gameplay.map._constants import GRID_CELL_SIZE, GRID_CELL_SIZE_XY, COLOR_FOCUS
-from son.gameplay.map._map_objects_base import MapObject
+from son.gameplay.map._map_objects_base import MapObject, MapObjectsList
 
 _RESOURCE_LIST = [
     ResourceInfo(name="grass", file="grass.png"),
@@ -23,11 +26,11 @@ class MapCell(Lifecycle):
     """
 
     @staticmethod
-    def _calc_pixel_pos(grid_pos: tuple[int, int]) -> tuple[int, int]:
+    def _calc_pixel_pos(grid_pos: VectorInt2D) -> VectorInt2D:
         grid_pos_x, grid_pos_y = grid_pos
         return grid_pos_x * GRID_CELL_SIZE, grid_pos_y * GRID_CELL_SIZE
 
-    def __init__(self, grid_pos: tuple[int, int], resource_manager: ResourceManager) -> None:
+    def __init__(self, grid_pos: VectorInt2D, resource_manager: ResourceManager) -> None:
         self._grid_pos = grid_pos
 
         self._rect = Rect(MapCell._calc_pixel_pos(grid_pos), GRID_CELL_SIZE_XY)
@@ -39,7 +42,7 @@ class MapCell(Lifecycle):
         self._terrain_type = "grass"
         self._surface = resource_manager.get_resource(self._terrain_type)
 
-        self._map_objects = list[MapObject]()
+        self._map_objects: MapObjectsList = list()
 
     @property
     def rect(self) -> Rect:
@@ -97,7 +100,7 @@ class MapCell(Lifecycle):
 
         return False
 
-    def _get_rect_with_delta(self, delta: tuple[int, int]) -> Rect:
+    def _get_rect_with_delta(self, delta: VectorInt2D) -> Rect:
         delta_x, delta_y = delta
 
         rect_delta = self._rect.copy()
@@ -119,7 +122,7 @@ class MapCell(Lifecycle):
         self._map_objects.append(map_object)
 
 
-MapCellArray = list[list[MapCell]]
+MapCellArray = List[List[MapCell]]
 
 
 class MapError(Exception):
@@ -131,12 +134,12 @@ class MapError(Exception):
 class Map(Lifecycle):
 
     @staticmethod
-    def _create_array(size: tuple[int, int], resource_manger: ResourceManager) -> MapCellArray:
+    def _create_array(size: VectorInt2D, resource_manger: ResourceManager) -> MapCellArray:
         size_x, size_y = size
-        array = MapCellArray()
+        array: MapCellArray = list()
 
         for y in range(size_y):
-            row = list[MapCell]()
+            row: List[MapCell] = list()
             for x in range(size_x):
                 cell = MapCell((x, y), resource_manger)
                 row.append(cell)
@@ -144,7 +147,7 @@ class Map(Lifecycle):
 
         return array
 
-    def __init__(self, size: tuple[int, int]):
+    def __init__(self, size: VectorInt2D):
         self._size = size
 
         self._resource_manager = ResourceManager(_RESOURCE_LIST)
@@ -156,7 +159,7 @@ class Map(Lifecycle):
         self._focused_cell: MapCell or None = None
 
     @property
-    def pixel_size(self) -> tuple[int, int]:
+    def pixel_size(self) -> VectorInt2D:
         """
         Size of the map in pixels.
         """
@@ -203,7 +206,7 @@ class Map(Lifecycle):
             for cell in row:
                 cell.draw(destination_surface, *args, **kwargs)
 
-    def get_cell(self, pos: tuple[int, int]) -> MapCell:
+    def get_cell(self, pos: VectorInt2D) -> MapCell:
         """
         Get the cell under the given position.
         :param pos: cell position

@@ -5,6 +5,7 @@ from pygame.locals import *
 from pygame.time import Clock
 
 from son.core.scenes import SceneManager
+from son.core.vectors import VectorInt2D
 from son.gameplay import SceneGameplay
 from son.main_menu import SceneMainMenu
 
@@ -14,7 +15,7 @@ class SpiritOfNationsApp:
     Application: Spirit of Nations.
     """
 
-    def __init__(self, resolution: tuple[int, int]) -> None:
+    def __init__(self, resolution: VectorInt2D) -> None:
         pygame.init()
         pygame.display.set_caption("Spirit of Nations")
 

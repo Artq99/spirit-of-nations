@@ -4,9 +4,10 @@ from pygame.event import Event
 from pygame.locals import *
 
 from son.core.ui._text import create_text
-from son.core.ui._widgets_base import UIWidget
+from son.core.ui._widgets_base import UIWidget, UIWidgetsList
 from son.core.ui.constants import *
 from son.core.utils.decorators import override
+from son.core.vectors import VectorInt2D
 
 
 class Box(UIWidget):
@@ -19,13 +20,13 @@ class Box(UIWidget):
 
         self._surface_padding = Surface((0, 0))
 
-        self._widgets = list[UIWidget]()
+        self._widgets: UIWidgetsList = list()
         self._padding = DEFAULT_PADDING
 
         self._update_surface()
 
     @property
-    def widgets(self) -> list[UIWidget]:
+    def widgets(self) -> UIWidgetsList:
         """
         Widgets in this box.
 
@@ -98,7 +99,7 @@ class Box(UIWidget):
 
         return False
 
-    def _calc_mouse_pos_with_delta(self, mouse_pos: tuple[int, int]):
+    def _calc_mouse_pos_with_delta(self, mouse_pos: VectorInt2D):
         delta_x = self.rect.left + self.padding
         delta_y = self.rect.top + self.padding
         return mouse_pos[0] - delta_x, mouse_pos[1] - delta_y
