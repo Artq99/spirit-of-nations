@@ -196,8 +196,9 @@ class Button(Label):
                 return True
 
         elif event.type == MOUSEBUTTONUP and event.button == 1:
-            if self._on_click is not None and self.is_focused:
-                self._on_click(*self._on_click_args, **self._on_click_kwargs)
+            if self.is_focused:
+                if self._on_click is not None:
+                    self._on_click(*self._on_click_args, **self._on_click_kwargs)
                 return True
 
         return False

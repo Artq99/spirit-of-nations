@@ -6,6 +6,7 @@ from pygame.rect import Rect
 from son.core.base import Lifecycle
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
+from son.gameplay._types import MapObjectInfo
 
 
 class MapObject(Lifecycle):
@@ -24,6 +25,12 @@ class MapObject(Lifecycle):
         rect = self._surface.get_rect()
         rect.center = cell_rect.center
         destination_surface.blit(self._surface, rect)
+
+    def info(self):
+        # TODO hardcoded for now
+        return MapObjectInfo(
+            name="Tribe"
+        )
 
 
 MapObjectsList = List[MapObject]

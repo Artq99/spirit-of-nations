@@ -1,4 +1,13 @@
 from dataclasses import dataclass
+from typing import List
+
+
+@dataclass
+class MapObjectInfo:
+    """
+    Info about a map object.
+    """
+    name: str
 
 
 @dataclass
@@ -8,6 +17,7 @@ class CellInfo:
     """
     grid_pos: tuple
     terrain_type: str
+    objects: List[MapObjectInfo]
 
 
 @dataclass

@@ -65,7 +65,8 @@ class MapCell(Lifecycle):
         """
         return CellInfo(
             grid_pos=self._grid_pos,
-            terrain_type=self._terrain_type
+            terrain_type=self._terrain_type,
+            objects=[o.info() for o in self._map_objects]
         )
 
     @override
