@@ -7,17 +7,12 @@ from pygame.locals import *
 
 from son.core.base import Lifecycle
 from son.core.events import EDGE_SCROLL, SHOW_CELL_INFO
-from son.core.resources import ResourceManager, ResourceInfo
+from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo, MapInfo
 from son.gameplay.map._constants import GRID_CELL_SIZE, GRID_CELL_SIZE_XY, COLOR_FOCUS
 from son.gameplay.map._map_objects_base import MapObject, MapObjectsList
-
-_RESOURCE_LIST = [
-    ResourceInfo(name="grass", file="grass.png"),
-    ResourceInfo(name="tribe", file="tribe.png")
-]
 
 
 class MapCell(Lifecycle):
@@ -148,15 +143,12 @@ class Map(Lifecycle):
 
         return array
 
-    def __init__(self, size: VectorInt2D):
+    def __init__(self, resource_manager: ResourceManager, size: VectorInt2D) -> None:
+        # Dependencies
+        self._resource_manager: ResourceManager = resource_manager
+
         self._size = size
-
-        self._resource_manager = ResourceManager(_RESOURCE_LIST)
-        self._resource_manager.load_resources()
-
         self._array = Map._create_array(size, self._resource_manager)
-        self.get_cell((5, 5)).add_object(MapObject(self._resource_manager))
-
         self._focused_cell: MapCell or None = None
 
     @property
@@ -216,3 +208,14 @@ class Map(Lifecycle):
             return self._array[pos[0]][pos[1]]
         except IndexError:
             raise MapError("Accessing a cell outside of the map: {}:{}".format(*pos))
+
+    def spawn(self, pos: VectorInt2D) -> None:
+        """
+        Spawn a map object into the cell under the given position.
+
+        TODO For now there is only one kind of game object. This method will take more arguments in the future.
+
+        :param pos: cell position
+        """
+        obj = MapObject(resource_manager=self._resource_manager)
+        self.get_cell(pos).add_object(obj)

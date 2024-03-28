@@ -1,1 +1,1 @@
-from son.gameplay.map._map import Map, MapCell
+from son.gameplay.map._map import Map

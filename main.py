@@ -1,11 +1,11 @@
 import re
 import sys
+from typing import Tuple
 
 from son import SpiritOfNationsApp
-from son.core.vectors import VectorInt2D
 
 
-def get_resolution() -> VectorInt2D:
+def get_resolution() -> Tuple[int, int]:
     """
     Check if the resolution has been given as an argument.
     When it has, parse it, when not, get the default value.

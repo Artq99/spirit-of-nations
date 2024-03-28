@@ -1,20 +1,33 @@
 from pygame import Surface
 from pygame.event import Event
 
+from son.core.resources import ResourceManager, ResourceInfo
 from son.core.scenes import SceneBase
 from son.core.utils.decorators import override
 from son.gameplay._edge_scrolling import EdgeScrollingController
 from son.gameplay._ui import UIGameplayController
 from son.gameplay.map import Map
 
+# TODO Hardcoded for now
+_RESOURCE_LIST = [
+    ResourceInfo(name="grass", file="grass.png"),
+    ResourceInfo(name="tribe", file="tribe.png")
+]
+
 
 class SceneGameplay(SceneBase):
     def __init__(self) -> None:
         super().__init__()
 
+        self._resource_manager = ResourceManager(_RESOURCE_LIST)
+        self._resource_manager.load_resources()
+
         self._ui_controller = UIGameplayController()
-        self._map = Map((100, 100))
+        self._map = Map(self._resource_manager, (100, 100))
         self._edge_scrolling_controller = EdgeScrollingController(self._map.pixel_size)
+
+        # TEST - remove later
+        self._map.spawn((5, 5))
 
     @override
     def pre_update(self, *args, **kwargs) -> None:
