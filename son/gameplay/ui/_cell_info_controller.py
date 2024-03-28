@@ -1,17 +1,15 @@
-from pygame.event import Event
-from pygame.locals import *
-
-from son.core.events import SHOW_CELL_INFO
 from son.core.ui.controller import UIController
 from son.core.ui.widgets import Box, Label, Button
-from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo
 
 
-class _BoxCellInfoController:
+class UICellInfoController:
     """
     Controller for the box showing cell info.
+
+    TODO Refactoring
+      - Should it inherit from UIController?
     """
 
     def __init__(self, owner: UIController):
@@ -76,7 +74,7 @@ class _BoxCellInfoController:
         button_close = Button()
         button_close.text = "Close"
         button_close.pos = (0, next_position_y)
-        button_close.register_on_click(_BoxCellInfoController._callback_close_box, self.owner, box)
+        button_close.register_on_click(UICellInfoController._callback_close_box, self.owner, box)
         box.add_widget(button_close)
 
         return box
@@ -104,29 +102,3 @@ class _BoxCellInfoController:
     @staticmethod
     def _callback_close_box(controller: UIController, box: Box):
         controller.remove_widget(box)
-
-
-class UIGameplayController(UIController):
-    """
-    UI Controller for the gameplay scene.
-    """
-
-    def __init__(self) -> None:
-        super().__init__()
-
-        self._box_cell_info_controller = _BoxCellInfoController(self)
-
-    @override
-    def handle_event(self, event: Event, *args, **kwargs) -> bool:
-        if super().handle_event(event, *args, **kwargs):
-            return True
-
-        if event.type == SHOW_CELL_INFO:
-            self._box_cell_info_controller.show_box(event.cell_info, event.pos)
-            return True
-
-        if event.type == MOUSEBUTTONUP and event.button == 3:
-            self._box_cell_info_controller.hide_box()
-            return True
-
-        return False

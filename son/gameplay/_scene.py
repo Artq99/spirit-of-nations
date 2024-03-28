@@ -5,8 +5,8 @@ from son.core.resources import ResourceManager, ResourceInfo
 from son.core.scenes import SceneBase
 from son.core.utils.decorators import override
 from son.gameplay._edge_scrolling import EdgeScrollingController
-from son.gameplay._ui import UIGameplayController
 from son.gameplay.map import Map
+from son.gameplay.ui import UIGameplayController
 
 # TODO Hardcoded for now
 _RESOURCE_LIST = [
