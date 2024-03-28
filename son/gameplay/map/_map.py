@@ -6,7 +6,7 @@ from pygame.event import Event
 from pygame.locals import *
 
 from son.core.base import Lifecycle
-from son.core.events import EDGE_SCROLL, SHOW_CELL_INFO
+from son.core.events import EDGE_SCROLL, SHOW_CELL_INFO, SHOW_MAP_OBJECT_INFO, SELECT_MAP_OBJECT, HIDE_MAP_OBJECT_INFO
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
@@ -90,9 +90,27 @@ class MapCell(Lifecycle):
             return False
 
         if self._is_focused:
-            if event.type == MOUSEBUTTONUP and event.button == 1:
-                pygame.event.post(Event(SHOW_CELL_INFO, {"cell_info": self.info, "pos": self._rect_delta.center}))
-                return True
+            if event.type == MOUSEBUTTONUP:
+
+                # Left mouse click - selecting an object on the map
+                if event.button == 1:
+                    # If there is an object in the cell:
+                    if len(self.info.objects) > 0:
+                        # - we notify the map about the new selected object
+                        pygame.event.post(Event(SELECT_MAP_OBJECT, {"map_object": self._map_objects[0]}))
+                        # - we notify the UI that the info window should be shown
+                        pygame.event.post(Event(SHOW_MAP_OBJECT_INFO, {"map_object_info": self.info.objects[0]}))
+                    # If there are no objects in the cell, i.e. it is empty, we must deselect an object:
+                    else:
+                        # - we notify the map and tell it that the selected object is None
+                        pygame.event.post(Event(SELECT_MAP_OBJECT, {"map_object": None}))
+                        # - we notify the UI that the info panel should be hidden
+                        pygame.event.post(Event(HIDE_MAP_OBJECT_INFO))
+                # Middle mouse click - viewing the cell info
+                # It should be the right mouse click (3), but it cannot be detected for some reason.
+                if event.button == 2:
+                    pygame.event.post(Event(SHOW_CELL_INFO, {"cell_info": self.info, "pos": self._rect_delta.center}))
+                    return True
 
         return False
 
@@ -150,6 +168,7 @@ class Map(Lifecycle):
         self._size = size
         self._array = Map._create_array(size, self._resource_manager)
         self._focused_cell: MapCell or None = None
+        self._selected_object: MapObject or None = None
 
     @property
     def pixel_size(self) -> VectorInt2D:
@@ -183,15 +202,19 @@ class Map(Lifecycle):
 
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
-        result = False
         for row in self._array:
             for cell in row:
-                result = cell.handle_event(event, *args, **kwargs)
+                if cell.handle_event(event, *args, **kwargs):
+                    return True
+
+        if event.type == SELECT_MAP_OBJECT:
+            self._selected_object = event.map_object
+            return True
 
         if event.type == EDGE_SCROLL:
-            result = True
+            return True
 
-        return result
+        return False
 
     @override
     def draw(self, destination_surface: Surface, *args, **kwargs) -> None:

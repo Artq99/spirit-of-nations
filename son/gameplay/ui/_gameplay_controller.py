@@ -1,10 +1,10 @@
-from pygame import MOUSEBUTTONUP
 from pygame.event import Event
 
-from son.core.events import SHOW_CELL_INFO
+from son.core.events import SHOW_CELL_INFO, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO
 from son.core.ui.controller import UIController
 from son.core.utils.decorators import override
 from son.gameplay.ui._cell_info_controller import UICellInfoController
+from son.gameplay.ui._map_object_info_controller import UIMapObjectInfoController
 
 
 class UIGameplayController(UIController):
@@ -16,18 +16,26 @@ class UIGameplayController(UIController):
         super().__init__()
 
         self._box_cell_info_controller = UICellInfoController(self)
+        self._map_object_info_controller = UIMapObjectInfoController(self)
 
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
         if super().handle_event(event, *args, **kwargs):
             return True
 
-        if event.type == SHOW_CELL_INFO:
-            self._box_cell_info_controller.show_box(event.cell_info, event.pos)
+        # A map object has been selected - we show the info panel.
+        if event.type == SHOW_MAP_OBJECT_INFO:
+            self._map_object_info_controller.show_box(event.map_object_info, (10, 10))
             return True
 
-        if event.type == MOUSEBUTTONUP and event.button == 3:
-            self._box_cell_info_controller.hide_box()
+        # No map object selected - we hide the info panel.
+        if event.type == HIDE_MAP_OBJECT_INFO:
+            self._map_object_info_controller.hide_box()
+            return True
+
+        # A map cell has been selected - we show the info box.
+        if event.type == SHOW_CELL_INFO:
+            self._box_cell_info_controller.show_box(event.cell_info, event.pos)
             return True
 
         return False
