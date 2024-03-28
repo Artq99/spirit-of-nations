@@ -12,7 +12,7 @@ from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo, MapInfo
 from son.gameplay.map._constants import GRID_CELL_SIZE, GRID_CELL_SIZE_XY, COLOR_FOCUS
-from son.gameplay.map._map_objects_base import MapObject, MapObjectsList
+from son.gameplay.map._map_objects_base import MapObject
 
 
 class MapCell(Lifecycle):
@@ -37,7 +37,7 @@ class MapCell(Lifecycle):
         self._terrain_type = "grass"
         self._surface = resource_manager.get_resource(self._terrain_type)
 
-        self._map_objects: MapObjectsList = list()
+        self._map_objects: List[MapObject] = list()
 
     @property
     def rect(self) -> Rect:
@@ -61,7 +61,7 @@ class MapCell(Lifecycle):
         return CellInfo(
             grid_pos=self._grid_pos,
             terrain_type=self._terrain_type,
-            objects=[o.info() for o in self._map_objects]
+            objects=[o.info for o in self._map_objects]
         )
 
     @override
@@ -217,5 +217,5 @@ class Map(Lifecycle):
 
         :param pos: cell position
         """
-        obj = MapObject(resource_manager=self._resource_manager)
+        obj = MapObject(name="Tribe", surface=self._resource_manager.get_resource("tribe"))
         self.get_cell(pos).add_object(obj)
