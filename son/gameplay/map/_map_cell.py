@@ -5,7 +5,8 @@ from pygame import Rect, MOUSEMOTION, MOUSEBUTTONUP, Surface
 from pygame.event import Event
 
 from son.core.base import Lifecycle
-from son.core.events import EDGE_SCROLL, SELECT_MAP_OBJECT, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO, SHOW_CELL_INFO
+from son.core.events import (EDGE_SCROLL, SELECT_MAP_OBJECT, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO,
+                             SHOW_CELL_INFO, MOVE_MAP_OBJECT)
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
@@ -95,20 +96,28 @@ class MapCell(Lifecycle):
                 if event.button == 1:
                     # If there is an object in the cell:
                     if len(self.info.objects) > 0:
-                        # - we notify the map about the new selected object
-                        pygame.event.post(Event(SELECT_MAP_OBJECT, {"map_object": self._map_objects[0]}))
+                        # - we notify the map about the new selected object and its position
+                        pygame.event.post(Event(SELECT_MAP_OBJECT, {
+                            "map_object": self._map_objects[0],
+                            "pos": self._grid_pos
+                        }))
                         # - we notify the UI that the info window should be shown
                         pygame.event.post(Event(SHOW_MAP_OBJECT_INFO, {"map_object_info": self.info.objects[0]}))
                     # If there are no objects in the cell, i.e. it is empty, we must deselect an object:
                     else:
                         # - we notify the map and tell it that the selected object is None
-                        pygame.event.post(Event(SELECT_MAP_OBJECT, {"map_object": None}))
+                        pygame.event.post(Event(SELECT_MAP_OBJECT, {"map_object": None, "pos": None}))
                         # - we notify the UI that the info panel should be hidden
                         pygame.event.post(Event(HIDE_MAP_OBJECT_INFO))
+
                 # Middle mouse click - viewing the cell info
-                # It should be the right mouse click (3), but it cannot be detected for some reason.
                 if event.button == 2:
                     pygame.event.post(Event(SHOW_CELL_INFO, {"cell_info": self.info, "pos": self._rect_delta.center}))
+                    return True
+
+                # Right mouse click - moving the selected map object
+                if event.button == 3:
+                    pygame.event.post(Event(MOVE_MAP_OBJECT, {"new_pos": self._grid_pos}))
                     return True
 
         return False
@@ -131,5 +140,16 @@ class MapCell(Lifecycle):
         for map_object in self._map_objects:
             map_object.draw(destination_surface, *args, **kwargs, cell_rect=self._rect_delta)
 
-    def add_object(self, map_object: MapObject):
+    def add_object(self, map_object: MapObject) -> None:
+        """
+        Add a map object to this cell.
+        :param map_object: map object to add
+        """
         self._map_objects.append(map_object)
+
+    def remove_object(self, map_object: MapObject) -> None:
+        """
+        Remove a map object from this cell.
+        :param map_object: map object to remove
+        """
+        self._map_objects.remove(map_object)

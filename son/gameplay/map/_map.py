@@ -4,7 +4,7 @@ from pygame import Surface
 from pygame.event import Event
 
 from son.core.base import Lifecycle
-from son.core.events import EDGE_SCROLL, SELECT_MAP_OBJECT
+from son.core.events import EDGE_SCROLL, SELECT_MAP_OBJECT, MOVE_MAP_OBJECT
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
@@ -31,6 +31,7 @@ class Map(Lifecycle):
         self._array = Map._create_array(size, self._resource_manager)
         self._focused_cell: MapCell or None = None
         self._selected_object: MapObject or None = None
+        self._selected_object_pos: VectorInt2D or None = None
 
     @property
     def pixel_size(self) -> VectorInt2D:
@@ -71,6 +72,22 @@ class Map(Lifecycle):
 
         if event.type == SELECT_MAP_OBJECT:
             self._selected_object = event.map_object
+            self._selected_object_pos = event.pos
+            return True
+
+        # Attempt of moving the selected map object (if not none) to a different cell
+        # For now it is a very simple and naive approach - the object simply moves to a new cell, and it doesn't take
+        # distance, type of cell or move capabilities of the object into consideration.
+        if event.type == MOVE_MAP_OBJECT:
+            if self._selected_object is not None:
+                # Remove the object from the old cell
+                old_cell = self.get_cell(self._selected_object_pos)
+                old_cell.remove_object(self._selected_object)
+                # Add the object to the new cell
+                new_cell = self.get_cell(event.new_pos)
+                new_cell.add_object(self._selected_object)
+                # Update the position of the selected map object
+                self._selected_object_pos = event.new_pos
             return True
 
         if event.type == EDGE_SCROLL:
@@ -90,7 +107,7 @@ class Map(Lifecycle):
         :param pos: cell position
         """
         try:
-            return self._array[pos[0]][pos[1]]
+            return self._array[pos[1]][pos[0]]
         except IndexError:
             raise MapError("Accessing a cell outside of the map: {}:{}".format(*pos))
 
