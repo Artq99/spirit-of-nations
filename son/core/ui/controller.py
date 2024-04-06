@@ -1,3 +1,5 @@
+from typing import List
+
 from pygame import Surface
 from pygame.event import Event
 
@@ -12,6 +14,7 @@ class UIController(Lifecycle):
     """
 
     def __init__(self) -> None:
+        self._subcontrollers: List[UISubcontroller] = list()
         self._widgets: UIWidgetsList = list()
 
     @property
@@ -26,17 +29,24 @@ class UIController(Lifecycle):
 
     @override
     def pre_update(self, *args, **kwargs) -> None:
-        for widget in self.widgets:
+        for subcontroller in self._subcontrollers:
+            subcontroller.pre_update(*args, **kwargs)
+        for widget in self._widgets:
             widget.pre_update(*args, **kwargs)
 
     @override
     def update(self, *args, **kwargs) -> None:
-        for widget in self.widgets:
+        for subcontroller in self._subcontrollers:
+            subcontroller.update(*args, **kwargs)
+        for widget in self._widgets:
             widget.update(*args, **kwargs)
 
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
-        for widget in self.widgets:
+        for subcontroller in self._subcontrollers:
+            if subcontroller.handle_event(event, *args, **kwargs):
+                return True
+        for widget in self._widgets:
             if widget.handle_event(event, *args, **kwargs):
                 return True
 
@@ -44,6 +54,8 @@ class UIController(Lifecycle):
 
     @override
     def draw(self, destination_surface: Surface, *args, **kwargs) -> None:
+        for subcontroller in self._subcontrollers:
+            subcontroller.draw(destination_surface, *args, **kwargs)
         for widget in self.widgets:
             widget.draw(destination_surface, *args, **kwargs)
 
@@ -64,3 +76,17 @@ class UIController(Lifecycle):
         """
         if widget in self.widgets:
             self._widgets.remove(widget)
+
+
+class UISubcontroller(Lifecycle):
+    """
+    Base class for a subcontroller - a designated subobject handling a specific UI element.
+    """
+
+    def __init__(self, owner: UIController) -> None:
+        """
+        Initialize UISubcontroller.
+
+        :param owner: UIController that governs this subcontroller
+        """
+        self._owner = owner

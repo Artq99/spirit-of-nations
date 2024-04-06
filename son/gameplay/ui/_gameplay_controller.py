@@ -17,8 +17,10 @@ class UIGameplayController(UIController):
         super().__init__()
 
         self._turn_tracker_bar_controller = UITurnTrackerBarController(self)
-        self._box_cell_info_controller = UICellInfoController(self)
+        self._cell_info_controller = UICellInfoController(self)
         self._map_object_info_controller = UIMapObjectInfoController(self)
+
+        self._subcontrollers.append(self._cell_info_controller)
 
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
@@ -43,7 +45,7 @@ class UIGameplayController(UIController):
 
         # A map cell has been selected - we show the info box.
         if event.type == SHOW_CELL_INFO:
-            self._box_cell_info_controller.show_box(event.cell_info, event.pos)
+            self._cell_info_controller.show_box(event.cell_info, event.pos)
             return True
 
         return False
