@@ -28,11 +28,20 @@ class TurnTracker:
     """
 
     def __init__(self):
+        """
+        Initialize TurnTracker.
+        """
         self._week: int = 1
         self._month: int = 0
         self._year: int = 1
 
-    def skip_turn(self):
+        self._info: TurnInfo = TurnInfo(
+            week=str(self._week),
+            month=_MONTHS[self._month],
+            year=str(self._year)
+        )
+
+    def skip_turn(self) -> None:
         """
         Skip 1 turn and update the tracker.
         """
@@ -46,13 +55,19 @@ class TurnTracker:
             self._month = 0
             self._year += 1
 
+        self._update_info()
+
     @property
-    def turn_info(self):
+    def turn_info(self) -> TurnInfo:
         """
         Info about the current turn.
         """
-        return TurnInfo(
-            week=str(self._week),
-            month=_MONTHS[self._month],
-            year=str(self._year)
-        )
+        return self._info
+
+    def _update_info(self) -> None:
+        """
+        Update the turn info.
+        """
+        self._info.week = str(self._week)
+        self._info.month = _MONTHS[self._month]
+        self._info.year = str(self._year)
