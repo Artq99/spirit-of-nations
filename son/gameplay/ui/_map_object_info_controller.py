@@ -7,6 +7,8 @@ from son.gameplay._types import MapObjectInfo
 class UIMapObjectInfoController:
     """
     Controller for the box showing map object info.
+
+    TODO: Refactoring - it works but it's ugly as hell
     """
 
     def __init__(self, owner: UIController) -> None:
@@ -50,7 +52,53 @@ class UIMapObjectInfoController:
             label_map_object_name.pos = (0, 0)
             self.box.add_widget(label_map_object_name)
 
+            pos_y = label_map_object_name.rect.bottom + 5
+
+            for attribute in self._info.attributes.values():
+                label_text = Label()
+                label_text.text = attribute.text
+                label_text.pos = (0, pos_y)
+                self.box.add_widget(label_text)
+
+                label_value = Label()
+                label_value.text = attribute.value
+                label_value.pos = (100, pos_y)
+                self.box.add_widget(label_value)
+
+                pos_y = label_text.rect.bottom
+
             self.owner.add_widget(self.box)
+
+    def update(self):
+        if self.box in self.owner.widgets:
+            self.owner.remove_widget(self.box)
+
+            if self._info is not None:
+                pos = self.box.pos
+                self._box = Box()
+                self.box.pos = pos
+
+                label_map_object_name = Label()
+                label_map_object_name.text = self._info.name
+                label_map_object_name.pos = (0, 0)
+                self.box.add_widget(label_map_object_name)
+
+                pos_y = label_map_object_name.rect.bottom + 5
+
+                for attribute in self._info.attributes.values():
+                    label_text = Label()
+                    label_text.text = attribute.text
+                    label_text.pos = (0, pos_y)
+                    self.box.add_widget(label_text)
+
+                    label_value = Label()
+                    label_value.text = attribute.value
+                    label_value.pos = (100, pos_y)
+                    self.box.add_widget(label_value)
+
+                    pos_y = label_text.rect.bottom
+
+                self.owner.add_widget(self.box)
 
     def hide_box(self) -> None:
         """

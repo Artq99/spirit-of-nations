@@ -117,7 +117,7 @@ class MapCell(Lifecycle):
 
                 # Right mouse click - moving the selected map object
                 if event.button == 3:
-                    pygame.event.post(Event(MOVE_MAP_OBJECT, {"new_pos": self._grid_pos}))
+                    pygame.event.post(Event(MOVE_MAP_OBJECT, {"target": self._grid_pos}))
                     return True
 
         return False

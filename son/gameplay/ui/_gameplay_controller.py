@@ -47,3 +47,7 @@ class UIGameplayController(UIController):
             return True
 
         return False
+
+    @override
+    def update(self, *args, **kwargs) -> None:
+        self._map_object_info_controller.update()

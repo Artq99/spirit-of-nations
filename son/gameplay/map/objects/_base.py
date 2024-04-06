@@ -1,11 +1,13 @@
 from pygame import Surface
+from pygame.event import Event
 from pygame.rect import Rect
 
 from son.core.base import Lifecycle
+from son.core.events import START_TURN
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.utils.functions import check_str_empty, check_none
-from son.gameplay._types import MapObjectInfo
+from son.gameplay._types import MapObjectInfo, TextValuePair
 
 
 class MapObject(Lifecycle):
@@ -28,14 +30,14 @@ class MapObject(Lifecycle):
         self._name: str = name
         self._surface: Surface = resource_manager.get_resource(res_name)
 
+        self._info = MapObjectInfo(name=self._name)
+
     @property
     def info(self) -> MapObjectInfo:
         """
         Information about this map object.
         """
-        return MapObjectInfo(
-            name=self._name
-        )
+        return self._info
 
     @override
     def draw(self, destination_surface: Surface, *args, **kwargs) -> None:
@@ -49,6 +51,12 @@ class MapObject(Lifecycle):
         rect = self._surface.get_rect()
         rect.center = cell_rect.center
         destination_surface.blit(self._surface, rect)
+
+    def _update_info(self):
+        """
+        Update the MapObjectInfo.
+        """
+        pass
 
 
 class Movable(MapObject):
@@ -68,3 +76,30 @@ class Movable(MapObject):
 
         self._max_movement_points: int = 0
         self._movement_points: int = 0
+
+        # Add the attribute movement to the info object and update it
+        self._info.attributes["movement"] = TextValuePair(text="Movement:", value="")
+        self._update_info()
+
+    @property
+    def movement_points(self) -> int:
+        """
+        Number of movement points of the object that are still available.
+        """
+        return self._movement_points
+
+    @movement_points.setter
+    def movement_points(self, value) -> None:
+        self._movement_points = value
+        self._update_info()  # Must be updated each time when the value changes
+
+    @override
+    def handle_event(self, event: Event, *args, **kwargs) -> bool:
+        # On the beginning of each turn the movement points are reset to the max value
+        if event.type == START_TURN:
+            self.movement_points = self._max_movement_points
+        return False
+
+    @override
+    def _update_info(self):
+        self._info.attributes["movement"].value = "{}/{}".format(self._movement_points, self._max_movement_points)

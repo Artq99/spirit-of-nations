@@ -10,7 +10,7 @@ from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import MapInfo
 from son.gameplay.map._map_cell import MapCell
-from son.gameplay.map.objects import MapObject
+from son.gameplay.map.objects import MapObject, Movable
 
 MapCellArray = List[List[MapCell]]
 
@@ -76,18 +76,30 @@ class Map(Lifecycle):
             return True
 
         # Attempt of moving the selected map object (if not none) to a different cell
-        # For now it is a very simple and naive approach - the object simply moves to a new cell, and it doesn't take
-        # distance, type of cell or move capabilities of the object into consideration.
         if event.type == MOVE_MAP_OBJECT:
-            if self._selected_object is not None:
-                # Remove the object from the old cell
-                old_cell = self.get_cell(self._selected_object_pos)
-                old_cell.remove_object(self._selected_object)
-                # Add the object to the new cell
-                new_cell = self.get_cell(event.new_pos)
-                new_cell.add_object(self._selected_object)
-                # Update the position of the selected map object
-                self._selected_object_pos = event.new_pos
+            if self._selected_object is not None and isinstance(self._selected_object, Movable):
+                if self._selected_object.movement_points == 0:
+                    # TODO Warning should be shown to the player
+                    return True
+                else:
+                    # Remove the object from the old cell
+                    old_cell = self.get_cell(self._selected_object_pos)
+                    old_cell.remove_object(self._selected_object)
+
+                    # Calculate the new position
+                    new_pos = self._calc_new_position_for_movement(self._selected_object_pos, event.target)
+
+                    # Update the movement points of the selected object
+                    # TODO For now to move one cell costs always 1 point. In the future different terrain types will
+                    #  have various costs of moving on. The check if the movement is possible at all should be adjusted
+                    #  as well then.
+                    self._selected_object.movement_points -= 1
+
+                    # Add the object to the new cell
+                    new_cell = self.get_cell(new_pos)
+                    new_cell.add_object(self._selected_object)
+                    # Update the position of the selected map object
+                    self._selected_object_pos = new_pos
             return True
 
         if event.type == EDGE_SCROLL:
@@ -133,3 +145,35 @@ class Map(Lifecycle):
             array.append(row)
 
         return array
+
+    @staticmethod
+    def _calc_new_position_for_movement(old_pos: VectorInt2D, target: VectorInt2D) -> VectorInt2D:
+        """
+        Calculate the new position after movement.
+
+        :param old_pos: old position of an object
+        :param target: target towards which the object should move
+        """
+        old_x, old_y = old_pos
+        target_x, target_y = target
+
+        # Calculate the direction.
+        direction_x = target_x - old_x
+        direction_y = target_y - old_y
+
+        # Normalize X.
+        if direction_x > 0:
+            direction_x = 1
+        elif direction_x < 0:
+            direction_x = -1
+
+        # Normalize Y.
+        if direction_y > 0:
+            direction_y = 1
+        elif direction_y < 0:
+            direction_y = -1
+
+        new_x = old_x + direction_x
+        nex_y = old_y + direction_y
+
+        return new_x, nex_y

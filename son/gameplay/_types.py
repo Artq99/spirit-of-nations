@@ -1,5 +1,14 @@
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Dict
+
+
+@dataclass
+class TextValuePair:
+    """
+    A pair of a label text and a value.
+    """
+    text: str
+    value: str
 
 
 @dataclass
@@ -8,6 +17,7 @@ class MapObjectInfo:
     Info about a map object.
     """
     name: str
+    attributes: Dict[str, TextValuePair] = field(default_factory=dict)
 
 
 @dataclass
