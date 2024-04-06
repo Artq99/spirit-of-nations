@@ -9,6 +9,7 @@ from son.core.utils.decorators import override
 from son.gameplay._edge_scrolling import EdgeScrollingController
 from son.gameplay._turn_tracking import TurnTracker
 from son.gameplay.map import Map
+from son.gameplay.map.objects.units import Tribe
 from son.gameplay.ui import UIGameplayController
 
 # TODO Hardcoded for now
@@ -32,7 +33,7 @@ class SceneGameplay(SceneBase):
         self._edge_scrolling_controller = EdgeScrollingController(self._map.pixel_size)
 
         # TEST - remove later
-        self._map.spawn((5, 5))
+        self._map.spawn((5, 5), Tribe(self._resource_manager))
 
     @override
     def pre_update(self, *args, **kwargs) -> None:

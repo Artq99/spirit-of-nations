@@ -10,7 +10,7 @@ from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import MapInfo
 from son.gameplay.map._map_cell import MapCell
-from son.gameplay.map._map_objects_base import MapObject
+from son.gameplay.map.objects import MapObject
 
 MapCellArray = List[List[MapCell]]
 
@@ -111,16 +111,14 @@ class Map(Lifecycle):
         except IndexError:
             raise MapError("Accessing a cell outside of the map: {}:{}".format(*pos))
 
-    def spawn(self, pos: VectorInt2D) -> None:
+    def spawn(self, pos: VectorInt2D, map_object: MapObject) -> None:
         """
         Spawn a map object into the cell under the given position.
 
-        TODO For now there is only one kind of game object. This method will take more arguments in the future.
-
         :param pos: cell position
+        :param map_object: map object to add
         """
-        obj = MapObject(name="Tribe", surface=self._resource_manager.get_resource("tribe"))
-        self.get_cell(pos).add_object(obj)
+        self.get_cell(pos).add_object(map_object)
 
     @staticmethod
     def _create_array(size: VectorInt2D, resource_manger: ResourceManager) -> MapCellArray:

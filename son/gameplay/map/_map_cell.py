@@ -12,7 +12,7 @@ from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo
 from son.gameplay.map._constants import GRID_CELL_SIZE, GRID_CELL_SIZE_XY, COLOR_FOCUS
-from son.gameplay.map._map_objects_base import MapObject
+from son.gameplay.map.objects import MapObject
 
 
 class MapCell(Lifecycle):
