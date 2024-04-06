@@ -26,3 +26,13 @@ class MapInfo:
     Info about the current state of a map.
     """
     focused_cell_info: CellInfo
+
+
+@dataclass
+class TurnInfo:
+    """
+    Info about the current turn.
+    """
+    week: str
+    month: str
+    year: str

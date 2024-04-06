@@ -1,10 +1,13 @@
+import pygame.event
 from pygame import Surface
 from pygame.event import Event
 
+from son.core.events import END_TURN, START_TURN
 from son.core.resources import ResourceManager, ResourceInfo
 from son.core.scenes import SceneBase
 from son.core.utils.decorators import override
 from son.gameplay._edge_scrolling import EdgeScrollingController
+from son.gameplay._turn_tracking import TurnTracker
 from son.gameplay.map import Map
 from son.gameplay.ui import UIGameplayController
 
@@ -21,6 +24,8 @@ class SceneGameplay(SceneBase):
 
         self._resource_manager = ResourceManager(_RESOURCE_LIST)
         self._resource_manager.load_resources()
+
+        self._turn_tracker = TurnTracker()
 
         self._ui_controller = UIGameplayController()
         self._map = Map(self._resource_manager, (100, 100))
@@ -43,6 +48,12 @@ class SceneGameplay(SceneBase):
 
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
+        if event.type == END_TURN:
+            self._turn_tracker.skip_turn()
+            info = self._turn_tracker.turn_info
+            pygame.event.post(Event(START_TURN, {"info": info}))
+            return True
+
         if self._ui_controller.handle_event(event):
             return True
 
