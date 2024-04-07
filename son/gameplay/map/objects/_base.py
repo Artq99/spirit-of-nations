@@ -7,7 +7,7 @@ from son.core.events import START_TURN
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.utils.functions import check_str_empty, check_none
-from son.gameplay._types import MapObjectInfo, TextValuePair
+from son.gameplay._types import MapObjectInfo
 
 
 class MapObject(Lifecycle):
@@ -30,7 +30,7 @@ class MapObject(Lifecycle):
         self._name: str = name
         self._surface: Surface = resource_manager.get_resource(res_name)
 
-        self._info = MapObjectInfo(name=self._name)
+        self._info = MapObjectInfo(name=self._name, type="Generic Map Object")
 
     @property
     def info(self) -> MapObjectInfo:
@@ -77,8 +77,9 @@ class Movable(MapObject):
         self._max_movement_points: int = 0
         self._movement_points: int = 0
 
-        # Add the attribute movement to the info object and update it
-        self._info.attributes["movement"] = TextValuePair(text="Movement:", value="")
+        # Set the type to unit and add the attribute movement to the info object and update it
+        self._info.type = "Unit"
+        self._info.attributes["movement"] = ""
         self._update_info()
 
     @property
@@ -102,4 +103,4 @@ class Movable(MapObject):
 
     @override
     def _update_info(self):
-        self._info.attributes["movement"].value = "{}/{}".format(self._movement_points, self._max_movement_points)
+        self._info.attributes["movement"] = "{}/{}".format(self._movement_points, self._max_movement_points)
