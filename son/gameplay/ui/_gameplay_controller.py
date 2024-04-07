@@ -14,6 +14,9 @@ class UIGameplayController(UIController):
     """
 
     def __init__(self) -> None:
+        """
+        Initialize UIGameplayController.
+        """
         super().__init__()
 
         # Subcontrollers
