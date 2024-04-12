@@ -1,5 +1,3 @@
-from typing import List
-
 from pygame import Surface
 from pygame.event import Event
 
@@ -10,9 +8,8 @@ from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import MapInfo
 from son.gameplay.map._map_cell import MapCell
+from son.gameplay.map._map_parser import parse_map
 from son.gameplay.map.objects import MapObject, Movable
-
-MapCellArray = List[List[MapCell]]
 
 
 class MapError(Exception):
@@ -28,7 +25,7 @@ class Map(Lifecycle):
         self._resource_manager: ResourceManager = resource_manager
 
         self._size = size
-        self._array = Map._create_array(size, self._resource_manager)
+        self._array = parse_map("test_map_1", self._resource_manager)
         self._focused_cell: MapCell or None = None
         self._selected_object: MapObject or None = None
         self._selected_object_pos: VectorInt2D or None = None
@@ -131,42 +128,6 @@ class Map(Lifecycle):
         :param map_object: map object to add
         """
         self.get_cell(pos).add_object(map_object)
-
-    @staticmethod
-    def _create_array(size: VectorInt2D, resource_manger: ResourceManager) -> MapCellArray:
-        """
-        Creates an array of map cells.
-
-        TODO Temporary solution.
-        """
-        size_x, size_y = size
-        array: MapCellArray = list()
-
-        surface_grass: Surface = resource_manger.get_resource("grass")
-        surface_forest: Surface = resource_manger.get_resource("forest")
-
-        forest_locations = [
-            (10, 10),
-            (11, 10),
-            (12, 10),
-            (11, 11),
-        ]
-
-        for y in range(size_y):
-            row: List[MapCell] = list()
-            for x in range(size_x):
-                terrain_type = "grass"
-                surface = surface_grass
-
-                if (x, y) in forest_locations:
-                    terrain_type = "forest"
-                    surface = surface_forest
-
-                cell = MapCell((x, y), terrain_type, surface)
-                row.append(cell)
-            array.append(row)
-
-        return array
 
     @staticmethod
     def _calc_new_position_for_movement(old_pos: VectorInt2D, target: VectorInt2D) -> VectorInt2D:
