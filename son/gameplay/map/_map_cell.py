@@ -7,7 +7,6 @@ from pygame.event import Event
 from son.core.base import Lifecycle
 from son.core.events import (EDGE_SCROLL, SELECT_MAP_OBJECT, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO,
                              SHOW_CELL_INFO, MOVE_MAP_OBJECT)
-from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo
@@ -25,17 +24,16 @@ class MapCell(Lifecycle):
         grid_pos_x, grid_pos_y = grid_pos
         return grid_pos_x * GRID_CELL_SIZE, grid_pos_y * GRID_CELL_SIZE
 
-    def __init__(self, grid_pos: VectorInt2D, resource_manager: ResourceManager) -> None:
-        self._grid_pos = grid_pos
+    def __init__(self, grid_pos: VectorInt2D, terrain_type: str, surface: Surface) -> None:
+        self._grid_pos: VectorInt2D = grid_pos
 
-        self._rect = Rect(MapCell._calc_pixel_pos(grid_pos), GRID_CELL_SIZE_XY)
-        self._rect_delta = self._get_rect_with_delta((0, 0))
+        self._rect: Rect = Rect(MapCell._calc_pixel_pos(grid_pos), GRID_CELL_SIZE_XY)
+        self._rect_delta: Rect = self._get_rect_with_delta((0, 0))
 
-        self._is_focused = False
+        self._is_focused: bool = False
 
-        # TODO terrain type and surface are hardcoded for now
-        self._terrain_type = "grass"
-        self._surface = resource_manager.get_resource(self._terrain_type)
+        self._terrain_type: str = terrain_type
+        self._surface: Surface = surface
 
         self._map_objects: List[MapObject] = list()
 

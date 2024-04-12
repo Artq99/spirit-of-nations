@@ -137,10 +137,12 @@ class Map(Lifecycle):
         size_x, size_y = size
         array: MapCellArray = list()
 
+        surface_grass: Surface = resource_manger.get_resource("grass")
+
         for y in range(size_y):
             row: List[MapCell] = list()
             for x in range(size_x):
-                cell = MapCell((x, y), resource_manger)
+                cell = MapCell((x, y), "grass", surface_grass)
                 row.append(cell)
             array.append(row)
 
