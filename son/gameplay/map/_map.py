@@ -134,15 +134,35 @@ class Map(Lifecycle):
 
     @staticmethod
     def _create_array(size: VectorInt2D, resource_manger: ResourceManager) -> MapCellArray:
+        """
+        Creates an array of map cells.
+
+        TODO Temporary solution.
+        """
         size_x, size_y = size
         array: MapCellArray = list()
 
         surface_grass: Surface = resource_manger.get_resource("grass")
+        surface_forest: Surface = resource_manger.get_resource("forest")
+
+        forest_locations = [
+            (10, 10),
+            (11, 10),
+            (12, 10),
+            (11, 11),
+        ]
 
         for y in range(size_y):
             row: List[MapCell] = list()
             for x in range(size_x):
-                cell = MapCell((x, y), "grass", surface_grass)
+                terrain_type = "grass"
+                surface = surface_grass
+
+                if (x, y) in forest_locations:
+                    terrain_type = "forest"
+                    surface = surface_forest
+
+                cell = MapCell((x, y), terrain_type, surface)
                 row.append(cell)
             array.append(row)
 
