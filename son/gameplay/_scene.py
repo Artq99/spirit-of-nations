@@ -15,6 +15,7 @@ from son.gameplay.ui import UIGameplayController
 _RESOURCE_LIST = [
     ResourceInfo(name="grass", file="grass.png"),
     ResourceInfo(name="forest", file="forest.png"),
+    ResourceInfo(name="forest_obj", file="forest_obj.png"),
     ResourceInfo(name="tribe", file="tribe.png")
 ]
 

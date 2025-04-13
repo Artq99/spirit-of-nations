@@ -106,9 +106,16 @@ class Map(Lifecycle):
 
     @override
     def draw(self, destination_surface: Surface, *args, **kwargs) -> None:
-        for row in self._array:
-            for cell in row:
-                cell.draw(destination_surface, *args, **kwargs)
+        # There are 3 map layers to render:
+        #  0: base surface
+        #  1: game objects
+        #  2: focus marker
+        for i in range(3):
+            # layer numer is passed down as a kwarg
+            kwargs["layer"] = i
+            for row in self._array:
+                for cell in row:
+                    cell.draw(destination_surface, *args, **kwargs)
 
     def get_cell(self, pos: VectorInt2D) -> MapCell:
         """

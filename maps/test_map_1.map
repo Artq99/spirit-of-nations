@@ -3035,12 +3035,21 @@
     </cell>
     <cell pos_x="10" pos_y="10">
         <terrain>forest</terrain>
+        <objects>
+            <forest/>
+        </objects>
     </cell>
     <cell pos_x="11" pos_y="10">
         <terrain>forest</terrain>
+        <objects>
+            <forest/>
+        </objects>
     </cell>
     <cell pos_x="12" pos_y="10">
         <terrain>forest</terrain>
+        <objects>
+            <forest/>
+        </objects>
     </cell>
     <cell pos_x="13" pos_y="10">
         <terrain>grass</terrain>
@@ -3338,6 +3347,9 @@
     </cell>
     <cell pos_x="11" pos_y="11">
         <terrain>forest</terrain>
+        <objects>
+            <forest/>
+        </objects>
     </cell>
     <cell pos_x="12" pos_y="11">
         <terrain>grass</terrain>

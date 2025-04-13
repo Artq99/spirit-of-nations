@@ -7,11 +7,6 @@ from son.gameplay.map.objects._base import Movable
 
 class Tribe(Movable):
     def __init__(self, resource_manager: ResourceManager) -> None:
-        """
-        Initialize Tribe.
-
-        :param resource_manager: resource manager for the initialization of the surface
-        """
         super().__init__("Tribe", "tribe", resource_manager)
 
         # Set the defaults for movement.

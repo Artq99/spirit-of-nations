@@ -95,12 +95,13 @@ class MapCell(Lifecycle):
                     # If there is an object in the cell:
                     if len(self.info.objects) > 0:
                         # - we notify the map about the new selected object and its position
+                        # TODO for now only the selection of the last object is possible (index -1)
                         pygame.event.post(Event(SELECT_MAP_OBJECT, {
-                            "map_object": self._map_objects[0],
+                            "map_object": self._map_objects[-1],
                             "pos": self._grid_pos
                         }))
                         # - we notify the UI that the info window should be shown
-                        pygame.event.post(Event(SHOW_MAP_OBJECT_INFO, {"map_object_info": self.info.objects[0]}))
+                        pygame.event.post(Event(SHOW_MAP_OBJECT_INFO, {"map_object_info": self.info.objects[-1]}))
                     # If there are no objects in the cell, i.e. it is empty, we must deselect an object:
                     else:
                         # - we notify the map and tell it that the selected object is None
@@ -131,12 +132,19 @@ class MapCell(Lifecycle):
 
     @override
     def draw(self, destination_surface: Surface, *args, **kwargs) -> None:
-        destination_surface.blit(self._surface, self._rect_delta)
-        if self._is_focused:
-            pygame.draw.rect(destination_surface, COLOR_FOCUS, self._rect_delta, width=1)
+        layer = kwargs["layer"]
 
-        for map_object in self._map_objects:
-            map_object.draw(destination_surface, *args, **kwargs, cell_rect=self._rect_delta)
+        # Layer 0 = base surface
+        if layer == 0:
+            destination_surface.blit(self._surface, self._rect_delta)
+        # Layer 1 = map objects
+        elif layer == 1:
+            for map_object in self._map_objects:
+                map_object.draw(destination_surface, *args, **kwargs, cell_rect=self._rect_delta)
+        # Layer 2 = focus marker
+        elif layer == 2:
+            if self._is_focused:
+                pygame.draw.rect(destination_surface, COLOR_FOCUS, self._rect_delta, width=1)
 
     def add_object(self, map_object: MapObject) -> None:
         """
