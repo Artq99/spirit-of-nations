@@ -3034,19 +3034,19 @@
         <terrain>grass</terrain>
     </cell>
     <cell pos_x="10" pos_y="10">
-        <terrain>forest</terrain>
+        <terrain>grass</terrain>
         <objects>
             <forest/>
         </objects>
     </cell>
     <cell pos_x="11" pos_y="10">
-        <terrain>forest</terrain>
+        <terrain>grass</terrain>
         <objects>
             <forest/>
         </objects>
     </cell>
     <cell pos_x="12" pos_y="10">
-        <terrain>forest</terrain>
+        <terrain>grass</terrain>
         <objects>
             <forest/>
         </objects>
@@ -3346,7 +3346,7 @@
         <terrain>grass</terrain>
     </cell>
     <cell pos_x="11" pos_y="11">
-        <terrain>forest</terrain>
+        <terrain>grass</terrain>
         <objects>
             <forest/>
         </objects>
