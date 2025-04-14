@@ -1,6 +1,3 @@
-"""
-Module with definitions of the units.
-"""
 from son.core.resources import ResourceManager
 from son.gameplay.map.objects._base import Movable
 
