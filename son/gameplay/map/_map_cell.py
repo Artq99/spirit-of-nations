@@ -86,6 +86,13 @@ class MapCell(Lifecycle):
         return self._is_focused
 
     @property
+    def stats(self) -> MapCellStats:
+        """
+        Stats of the cell.
+        """
+        return self._stats
+
+    @property
     def info(self) -> CellInfo:
         """
         Information about this cell.

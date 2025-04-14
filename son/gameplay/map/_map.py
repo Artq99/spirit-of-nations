@@ -79,21 +79,23 @@ class Map(Lifecycle):
                     # TODO Warning should be shown to the player
                     return True
                 else:
+                    # Calculate the new position and get the new cell object
+                    new_pos = self._calc_new_position_for_movement(self._selected_object_pos, event.target)
+                    new_cell = self.get_cell(new_pos)
+
+                    # Check if the selected object has enough movement points
+                    if self._selected_object.movement_points < new_cell.stats.movement_cost:
+                        # TODO Warning should be shown to the player
+                        return True
+
                     # Remove the object from the old cell
                     old_cell = self.get_cell(self._selected_object_pos)
                     old_cell.remove_object(self._selected_object)
 
-                    # Calculate the new position
-                    new_pos = self._calc_new_position_for_movement(self._selected_object_pos, event.target)
-
                     # Update the movement points of the selected object
-                    # TODO For now to move one cell costs always 1 point. In the future different terrain types will
-                    #  have various costs of moving on. The check if the movement is possible at all should be adjusted
-                    #  as well then.
-                    self._selected_object.movement_points -= 1
+                    self._selected_object.movement_points -= new_cell.stats.movement_cost
 
                     # Add the object to the new cell
-                    new_cell = self.get_cell(new_pos)
                     new_cell.add_object(self._selected_object)
                     # Update the position of the selected map object
                     self._selected_object_pos = new_pos
