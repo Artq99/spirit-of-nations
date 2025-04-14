@@ -19,6 +19,7 @@ class CellInfo:
     """
     grid_pos: tuple
     terrain_type: str
+    movement_cost: str
     objects: List[MapObjectInfo]
 
 

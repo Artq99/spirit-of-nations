@@ -32,6 +32,9 @@ class SceneGameplay(SceneBase):
         self._map = Map(self._resource_manager, (100, 100))
         self._edge_scrolling_controller = EdgeScrollingController(self._map.pixel_size)
 
+        info = self._turn_tracker.turn_info
+        pygame.event.post(Event(START_TURN, {"info": info}))
+
     @override
     def pre_update(self, *args, **kwargs) -> None:
         self._ui_controller.pre_update(*args, **kwargs)

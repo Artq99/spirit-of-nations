@@ -50,6 +50,14 @@ class UICellInfoController(UISubcontroller):
 
         next_position_y = label_position.rect.bottom + 5
 
+        # Movement cost
+        label_movement_cost = Label()
+        label_movement_cost.text = "Movement cost: {}".format(self._info.movement_cost)
+        label_movement_cost.pos = (0, next_position_y)
+        box.add_widget(label_movement_cost)
+
+        next_position_y = label_movement_cost.rect.bottom + 5
+
         # Objects
         if len(self._info.objects) > 0:
             label_objects_title = Label()

@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from pygame import Surface
 from pygame.event import Event
 from pygame.rect import Rect
@@ -57,6 +59,34 @@ class MapObject(Lifecycle):
         Update the MapObjectInfo.
         """
         pass
+
+
+class Static(MapObject):
+    """
+    Map object that does not move but modifies the cell where it is.
+
+    The basic usage is to modify the stats of the cell using the list of modifiers. The inheriting classes
+    can further extend this functionality.
+    """
+
+    def __init__(self, name: str, res_name: str, resource_manager: ResourceManager) -> None:
+        """
+        Initialize Static.
+
+        :param name: in-game name of the object
+        :param res_name: name of hte resource that should be loaded as the surface
+        :param resource_manager: resource manager for the initialization of the surface
+        """
+        super().__init__(name, res_name, resource_manager)
+
+        self._modifiers: List[Tuple[str, int]] = list()
+
+    @property
+    def modifiers(self) -> List[Tuple[str, int]]:
+        """
+        List of the modifiers this map object applies to the map cell where it is placed.
+        """
+        return self._modifiers
 
 
 class Movable(MapObject):

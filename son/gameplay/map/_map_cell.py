@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import pygame
 from pygame import Rect, MOUSEMOTION, MOUSEBUTTONUP, Surface
@@ -6,12 +6,44 @@ from pygame.event import Event
 
 from son.core.base import Lifecycle
 from son.core.events import (EDGE_SCROLL, SELECT_MAP_OBJECT, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO,
-                             SHOW_CELL_INFO, MOVE_MAP_OBJECT)
+                             SHOW_CELL_INFO, MOVE_MAP_OBJECT, START_TURN)
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo
 from son.gameplay.map._constants import GRID_CELL_SIZE, GRID_CELL_SIZE_XY, COLOR_FOCUS
-from son.gameplay.map.objects import MapObject
+from son.gameplay.map.objects import MapObject, Static
+
+
+class MapCellStats:
+    """
+    Stats of the map cell.
+    """
+
+    def __init__(self) -> None:
+        self._movement_cost_base: int = 0
+        self._movement_cost: int = 0
+
+        self._set_defaults()
+
+    @property
+    def movement_cost(self) -> int:
+        """
+        Movement cost for units to stand on this cell.
+        """
+        return self._movement_cost
+
+    def update(self, modifiers: List[Tuple[str, int]]) -> None:
+        """
+        Update the cell stats with the modifiers values.
+        """
+        self._set_defaults()
+        for modifier in modifiers:
+            if modifier[0] == "movement_cost":
+                self._movement_cost += modifier[1]
+
+    def _set_defaults(self) -> None:
+        self._movement_cost_base = 1
+        self._movement_cost = self._movement_cost_base
 
 
 class MapCell(Lifecycle):
@@ -37,6 +69,8 @@ class MapCell(Lifecycle):
 
         self._map_objects: List[MapObject] = list()
 
+        self._stats: MapCellStats = MapCellStats()
+
     @property
     def rect(self) -> Rect:
         """
@@ -59,6 +93,7 @@ class MapCell(Lifecycle):
         return CellInfo(
             grid_pos=self._grid_pos,
             terrain_type=self._terrain_type,
+            movement_cost=str(self._stats.movement_cost),
             objects=[o.info for o in self._map_objects]
         )
 
@@ -86,6 +121,13 @@ class MapCell(Lifecycle):
         elif event.type == MOUSEMOTION:
             self._is_focused = self._rect_delta.collidepoint(event.pos)
             return False
+
+        elif event.type == START_TURN:
+            all_modifiers: List[Tuple[str, int]] = list()
+            for map_object in self._map_objects:
+                if isinstance(map_object, Static):
+                    all_modifiers.extend(map_object.modifiers)
+            self._stats.update(all_modifiers)
 
         if self._is_focused:
             if event.type == MOUSEBUTTONUP:
