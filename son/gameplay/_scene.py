@@ -3,7 +3,7 @@ from pygame import Surface
 from pygame.event import Event
 
 from son.core.events import END_TURN, START_TURN
-from son.core.resources import ResourceManager, ResourceInfo
+from son.core.resources import ResourceManager, DataPath
 from son.core.scenes import SceneBase
 from son.core.utils.decorators import override
 from son.gameplay._edge_scrolling import EdgeScrollingController
@@ -11,11 +11,11 @@ from son.gameplay._turn_tracking import TurnTracker
 from son.gameplay.map import Map
 from son.gameplay.ui import UIGameplayController
 
-# TODO Hardcoded for now
-_RESOURCE_LIST = [
-    ResourceInfo(name="grass", file="terrain_grassland.png"),
-    ResourceInfo(name="forest_obj", file="object_forest.png"),
-    ResourceInfo(name="tribe", file="unit_tribe.png")
+# Paths to the directories with data files
+_DATA_PATHS = [
+    DataPath(path="terrain", prefix="terrain"),
+    DataPath(path="objects", prefix="object"),
+    DataPath(path="units", prefix="unit")
 ]
 
 
@@ -23,7 +23,7 @@ class SceneGameplay(SceneBase):
     def __init__(self) -> None:
         super().__init__()
 
-        self._resource_manager = ResourceManager(_RESOURCE_LIST)
+        self._resource_manager = ResourceManager(_DATA_PATHS)
         self._resource_manager.load_resources()
 
         self._turn_tracker = TurnTracker()

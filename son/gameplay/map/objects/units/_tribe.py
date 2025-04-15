@@ -4,7 +4,7 @@ from son.gameplay.map.objects._base import Movable
 
 class Tribe(Movable):
     def __init__(self, resource_manager: ResourceManager) -> None:
-        super().__init__("Tribe", "tribe", resource_manager)
+        super().__init__("Tribe", "unit.tribe", resource_manager)
 
         # Set the defaults for movement.
         self._max_movement_points = 5

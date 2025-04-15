@@ -29,7 +29,7 @@ def parse_map(name: str, resource_manager: ResourceManager) -> List[List[MapCell
         for x in range(size_x):
             cell_info = root.find("./cell[@pos_x='{}'][@pos_y='{}']".format(x, y))
             terrain = cell_info.find("./terrain").text
-            surface = resource_manager.get_resource(terrain)
+            surface = resource_manager.get_resource("terrain." + terrain)
 
             cell = MapCell((x, y), terrain, surface)
 
