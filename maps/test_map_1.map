@@ -3062,6 +3062,9 @@
     </cell>
     <cell pos_x="16" pos_y="10">
         <terrain>grassland</terrain>
+        <objects>
+            <boulders/>
+        </objects>
     </cell>
     <cell pos_x="17" pos_y="10">
         <terrain>grassland</terrain>

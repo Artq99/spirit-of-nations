@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 from son.core.resources import ResourceManager
 from son.gameplay.map._map_cell import MapCell
-from son.gameplay.map.objects.static import Forest
+from son.gameplay.map.objects.static import Forest, Boulders
 from son.gameplay.map.objects.units import Tribe
 
 
@@ -42,6 +42,9 @@ def parse_map(name: str, resource_manager: ResourceManager) -> List[List[MapCell
                     if map_object.tag == "forest":
                         forest = Forest(resource_manager)
                         cell.add_object(forest)
+                    if map_object.tag == "boulders":
+                        boulders = Boulders(resource_manager)
+                        cell.add_object(boulders)
 
             row.append(cell)
         array.append(row)
