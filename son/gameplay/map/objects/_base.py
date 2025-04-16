@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from pygame import Surface
@@ -8,30 +9,25 @@ from son.core.base import Lifecycle
 from son.core.events import START_TURN
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
-from son.core.utils.functions import check_str_empty, check_none
 from son.gameplay._types import MapObjectInfo
 
 
-class MapObject(Lifecycle):
+class MapObject(Lifecycle, ABC):
     """
-    Base class for all map objects.
+    Abstract base class for all map objects.
+
+    Defines the in-game name for the object, provides basic information that can be displayed and implements
+    the rendering.
     """
 
-    def __init__(self, name: str, res_name: str, resource_manager: ResourceManager) -> None:
+    def __init__(self, name: str) -> None:
         """
         Initialize MapObject.
 
         :param name: in-game name of the object
-        :param res_name: name of the resource that should be loaded as the surface
-        :param resource_manager: resource manager for the initialization of the surface
         """
-        check_str_empty(name, "name")
-        check_str_empty(res_name, "res_name")
-        check_none(resource_manager, "resource_manager")
 
         self._name: str = name
-        self._surface: Surface = resource_manager.get_resource(res_name)
-
         self._info = MapObjectInfo(name=self._name, type="Generic Map Object")
 
     @property
@@ -50,9 +46,20 @@ class MapObject(Lifecycle):
         except KeyError:
             raise TypeError("missing parameter 'cell_rect' when drawing the map object '{}'".format(self._name))
 
-        rect = self._surface.get_rect()
+        surface = self._get_surface()
+        rect = surface.get_rect()
         rect.center = cell_rect.center
-        destination_surface.blit(self._surface, rect)
+        destination_surface.blit(surface, rect)
+
+    @abstractmethod
+    def _get_surface(self) -> Surface:
+        """
+        Get the surface that should be rendered as the representation of the object on the map.
+
+        This is an abstract method. By overriding it the inheriting classes can define logic what surface
+        is rendered at the moment.
+        """
+        pass
 
     def _update_info(self):
         """
@@ -61,24 +68,15 @@ class MapObject(Lifecycle):
         pass
 
 
-class Static(MapObject):
+class ModifiersHolder:
     """
-    Map object that does not move but modifies the cell where it is.
-
-    The basic usage is to modify the stats of the cell using the list of modifiers. The inheriting classes
-    can further extend this functionality.
+    Class that adds the cell modifiers to an inheriting object.
     """
 
-    def __init__(self, name: str, res_name: str, resource_manager: ResourceManager) -> None:
+    def __init__(self) -> None:
         """
-        Initialize Static.
-
-        :param name: in-game name of the object
-        :param res_name: name of hte resource that should be loaded as the surface
-        :param resource_manager: resource manager for the initialization of the surface
+        Initialize Modifiers Holder
         """
-        super().__init__(name, res_name, resource_manager)
-
         self._modifiers: List[Tuple[str, int]] = list()
 
     @property
@@ -86,23 +84,60 @@ class Static(MapObject):
         """
         List of the modifiers this map object applies to the map cell where it is placed.
         """
-        return self._modifiers
+        return self._modifiers.copy()
 
 
-class Movable(MapObject):
+class Static(MapObject):
+    """
+    Simple map object that does not move and is not animated.
+
+    It always renders the resource specified on creation.
+    """
+
+    def __init__(self, name: str, resource: str, resource_manager: ResourceManager) -> None:
+        """
+        Initialize Static.
+
+        :param name: in-game name of the object
+        :param resource: resource name that should be loaded as the surface
+        :param resource_manager: the resource manager
+        """
+        super().__init__(name)
+        self._surface = resource_manager.get_resource(resource)
+
+    def _get_surface(self) -> Surface:
+        return self._surface
+
+
+class StaticModifiersHolder(Static, ModifiersHolder):
+    """
+    Map object that does not move and is not animated but modifies the cell where it is.
+    """
+
+    def __init__(self, name: str, resource: str, resource_manager: ResourceManager) -> None:
+        """
+        Initialize StaticModifiersHolder.
+
+        :param name: in-game name of the object
+        :param resource: resource name that should be loaded as the surface
+        :param resource_manager: the resource manager
+        """
+        Static.__init__(self, name, resource, resource_manager)
+        ModifiersHolder.__init__(self)
+
+
+class Movable(MapObject, ABC):
     """
     Map object that can move on the map.
     """
 
-    def __init__(self, name: str, res_name: str, resource_manager: ResourceManager) -> None:
+    def __init__(self, name: str) -> None:
         """
         Initialize Movable.
 
         :param name: in-game name of the object
-        :param res_name: name of the resource that should be loaded as the surface
-        :param resource_manager: resource manager for the initialization of the surface
         """
-        super().__init__(name, res_name, resource_manager)
+        super().__init__(name)
 
         self._max_movement_points: int = 0
         self._movement_points: int = 0
@@ -124,6 +159,7 @@ class Movable(MapObject):
         self._movement_points = value
         self._update_info()  # Must be updated each time when the value changes
 
+    # noinspection PyUnusedLocal
     @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
         # On the beginning of each turn the movement points are reset to the max value

@@ -11,7 +11,7 @@ from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
 from son.gameplay._types import CellInfo
 from son.gameplay.map._constants import GRID_CELL_SIZE, GRID_CELL_SIZE_XY, COLOR_FOCUS
-from son.gameplay.map.objects import MapObject, Static
+from son.gameplay.map.objects import MapObject, ModifiersHolder
 
 
 class MapCellStats:
@@ -132,7 +132,7 @@ class MapCell(Lifecycle):
         elif event.type == START_TURN:
             all_modifiers: List[Tuple[str, int]] = list()
             for map_object in self._map_objects:
-                if isinstance(map_object, Static):
+                if isinstance(map_object, ModifiersHolder):
                     all_modifiers.extend(map_object.modifiers)
             self._stats.update(all_modifiers)
 
