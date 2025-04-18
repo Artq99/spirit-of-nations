@@ -3,7 +3,7 @@ from typing import Optional
 from son.core.ui.controller import UIController, UISubcontroller
 from son.core.ui.widgets import Box, Label
 from son.core.utils.decorators import override
-from son.gameplay._types import MapObjectInfo
+from son.gameplay.types import MapObjectInfo
 
 
 class UIUnitInfoController(UISubcontroller):

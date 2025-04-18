@@ -1,4 +1,4 @@
-from son.gameplay._types import TurnInfo
+from son.gameplay.types import TurnInfo
 
 # Constants for the month names
 _MONTHS = [

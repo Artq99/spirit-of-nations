@@ -6,10 +6,10 @@ from son.core.events import EDGE_SCROLL, SELECT_MAP_OBJECT, MOVE_MAP_OBJECT
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
-from son.gameplay._types import MapInfo
 from son.gameplay.map._map_cell import MapCell
 from son.gameplay.map._map_parser import parse_map
 from son.gameplay.map.objects import MapObject, Movable
+from son.gameplay.types import MapInfo
 
 
 class MapError(Exception):

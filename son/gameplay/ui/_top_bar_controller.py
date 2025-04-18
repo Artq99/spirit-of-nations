@@ -5,7 +5,7 @@ from son.core.events import END_TURN, START_TURN
 from son.core.ui.controller import UIController, UISubcontroller
 from son.core.ui.widgets import Box, Label, Button
 from son.core.utils.decorators import override
-from son.gameplay._types import TurnInfo
+from son.gameplay.types import TurnInfo
 
 
 class UITopBarController(UISubcontroller):

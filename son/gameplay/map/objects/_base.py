@@ -9,7 +9,7 @@ from son.core.base import Lifecycle
 from son.core.events import START_TURN
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
-from son.gameplay._types import MapObjectInfo
+from son.gameplay.types import MapObjectInfo
 
 
 class MapObject(Lifecycle, ABC):

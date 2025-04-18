@@ -9,9 +9,9 @@ from son.core.events import (EDGE_SCROLL, SELECT_MAP_OBJECT, SHOW_MAP_OBJECT_INF
                              SHOW_CELL_INFO, MOVE_MAP_OBJECT, START_TURN)
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
-from son.gameplay._types import CellInfo
 from son.gameplay.map._constants import GRID_CELL_SIZE, GRID_CELL_SIZE_XY, COLOR_FOCUS
 from son.gameplay.map.objects import MapObject, ModifiersHolder
+from son.gameplay.types import CellInfo
 
 
 class MapCellStats:

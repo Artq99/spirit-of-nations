@@ -3,7 +3,7 @@ from typing import Optional
 from son.core.ui.controller import UIController, UISubcontroller
 from son.core.ui.widgets import Box, Label, Button
 from son.core.vectors import VectorInt2D
-from son.gameplay._types import CellInfo
+from son.gameplay.types import CellInfo
 
 
 class UICellInfoController(UISubcontroller):
