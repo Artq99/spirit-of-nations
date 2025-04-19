@@ -159,14 +159,7 @@ class Forest(MapObject, ModifiersHolder):
         self._update_info()
 
     def _get_surface(self) -> Surface:
-        if self._stats.density < 25:
-            return self._surfaces[0]
-        elif self._stats.density < 50:
-            return self._surfaces[1]
-        elif self._stats.density < 75:
-            return self._surfaces[2]
-        else:
-            return self._surfaces[3]
+        return self._surfaces[self._stats.growth_stage]
 
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
         if event.type == START_TURN:
