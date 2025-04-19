@@ -46,6 +46,10 @@ class ForestStats:
         self._density: int = 0
         self._age_in_turns: int = 0
 
+        # Cached
+        self._cached_age = 0
+        self._cached_growth_stage = STAGE_YOUNG
+
     @property
     def density(self) -> int:
         """
@@ -58,8 +62,14 @@ class ForestStats:
         """
         Age of the forest in years.
         """
-        # Age in turns divided by 12 months divided by 4 weeks
-        return int(self._age_in_turns / 12 / 4)
+        return self._cached_age
+
+    @property
+    def growth_stage(self):
+        """
+        Get the growth stage of the forest.
+        """
+        return self._cached_growth_stage
 
     def update_on_new_turn(self, turn_info: TurnInfo) -> None:
         """
@@ -69,6 +79,7 @@ class ForestStats:
         """
         # Update the age of the forest.
         self._age_in_turns += 1
+        self._update_cached_age()
 
         # When the density is 100 it cannot grow any further.
         if self._density == 100:
@@ -78,7 +89,7 @@ class ForestStats:
         if month not in GROWTH_MONTHS:
             return
 
-        stage = self._get_growth_stage()
+        stage = self.growth_stage
         base_grow_chance = GROWTH_CHANCES[stage]
 
         roll = random.randint(1, 100)
@@ -86,29 +97,38 @@ class ForestStats:
         # When the forest is old, age factor doesn't matter.
         if stage == STAGE_OLD and roll == base_grow_chance:
             self._density += 1
-            return
-
-        growth_stage_max_age = STAGE_MAX_AGES[stage]
-        chance = (self.age / growth_stage_max_age) * base_grow_chance
-
-        if roll <= chance:
-            self._density += 1
+        else:
+            growth_stage_max_age = STAGE_MAX_AGES[stage]
+            chance = (self.age / growth_stage_max_age) * base_grow_chance
+            if roll <= chance:
+                self._density += 1
 
         # Normalize density
         if self._density > 100:
             self._density = 100
 
-    def _get_growth_stage(self):
+        self._update_cached_growth_stage()
+
+    def _update_cached_age(self):
         """
-        Get the growth stage of the forest.
+        Update the cached age in years.
+
+        Age in years is equal to the age in turns divided by 12 months divided by 4 weeks.
+        """
+        self._cached_age = self._age_in_turns / 12 / 4
+
+    def _update_cached_growth_stage(self):
+        """
+        Update the cached growth stage.
         """
         if self._density < 25:
-            return STAGE_YOUNG
+            self._cached_growth_stage = STAGE_YOUNG
         elif self._density < 50:
-            return STAGE_LOW
+            self._cached_growth_stage = STAGE_LOW
         elif self._density < 75:
-            return STAGE_GROWN
-        return STAGE_OLD
+            self._cached_growth_stage = STAGE_GROWN
+        else:
+            self._cached_growth_stage = STAGE_OLD
 
 
 class Forest(MapObject, ModifiersHolder):
