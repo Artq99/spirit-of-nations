@@ -53,7 +53,7 @@ def parse_map(name: str, resource_manager: ResourceManager) -> List[List[MapCell
                 for map_object in map_objects:
                     try:
                         object_type = _OBJECTS[map_object.tag]
-                        instance = object_type(resource_manager)
+                        instance = object_type(resource_manager, map_object)
                         cell.add_object(instance)
                     except KeyError:
                         raise MapParseException("Unknown object: {}".format(map_object.tag))

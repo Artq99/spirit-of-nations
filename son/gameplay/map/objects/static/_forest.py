@@ -1,5 +1,6 @@
 import random
-from typing import List
+from typing import List, Optional
+from xml.etree.ElementTree import Element
 
 from pygame import Surface
 from pygame.event import Event
@@ -34,14 +35,39 @@ GROWTH_CHANCES = {
 }
 
 
-class ForestStats:
+class _ForestParser:
+    """
+    Parser that loads information about the forst game object from an XML node form a map file.
+    """
+
+    def __init__(self, xml_element: Element) -> None:
+        """
+        Initialize forest parser.
+
+        :param xml_element: XML node from a map file
+        """
+        self.density: int = 0
+        self.age_in_turns: int = 0
+
+        element_density: Optional[Element] = xml_element.find("./density")
+        if element_density is not None:
+            self.density = int(element_density.text)
+
+        element_age_in_turns: Optional[Element] = xml_element.find("./age_in_turns")
+        if element_age_in_turns is not None:
+            self.age_in_turns = int(element_age_in_turns.text)
+
+
+class _ForestStats:
     """
     Stats of the forest map object.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, xml_parser: Optional[_ForestParser] = None) -> None:
         """
         Initialize forest stats.
+
+        :param xml_parser: object with parsed XML data from a map file (optional)
         """
         self._density: int = 0
         self._age_in_turns: int = 0
@@ -49,6 +75,14 @@ class ForestStats:
         # Cached
         self._cached_age = 0
         self._cached_growth_stage = STAGE_YOUNG
+
+        # Parse stats from XML values
+        if xml_parser is not None:
+            self._density = xml_parser.density
+            self._age_in_turns = xml_parser.age_in_turns
+
+            self._update_cached_growth_stage()
+            self._update_cached_age()
 
     @property
     def density(self) -> int:
@@ -136,18 +170,23 @@ class Forest(MapObject, ModifiersHolder):
     Forest game object.
     """
 
-    def __init__(self, resource_manager: ResourceManager) -> None:
+    def __init__(self, resource_manager: ResourceManager, xml_element: Optional[Element] = None) -> None:
         """
         Initialize Forest.
 
         :param resource_manager: the resource manager
+        :param xml_element: XML node from a map file (optional)
         """
         MapObject.__init__(self, "Forest")
         ModifiersHolder.__init__(self)
 
         self._modifiers.append(("movement_cost", 2))
 
-        self._stats = ForestStats()
+        parser: Optional[_ForestParser] = None
+        if xml_element is not None:
+            parser = _ForestParser(xml_element)
+
+        self._stats: _ForestStats = _ForestStats(parser)
 
         self._surfaces: List[Surface] = [
             resource_manager.get_resource("object.forest_01.stage_1"),
@@ -165,7 +204,6 @@ class Forest(MapObject, ModifiersHolder):
         if event.type == START_TURN:
             self._stats.update_on_new_turn(event.info)
             self._update_info()
-            print(self._stats.density)
         return False
 
     def _update_info(self):

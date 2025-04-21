@@ -3036,19 +3036,28 @@
     <cell pos_x="10" pos_y="10">
         <terrain>grassland</terrain>
         <objects>
-            <forest/>
+            <forest>
+                <density>24</density>
+                <age_in_turns>432</age_in_turns>
+            </forest>
         </objects>
     </cell>
     <cell pos_x="11" pos_y="10">
         <terrain>grassland</terrain>
         <objects>
-            <forest/>
+            <forest>
+                <density>74</density>
+                <age_in_turns>28752</age_in_turns>
+            </forest>
         </objects>
     </cell>
     <cell pos_x="12" pos_y="10">
         <terrain>grassland</terrain>
         <objects>
-            <forest/>
+            <forest>
+                <density>49</density>
+                <age_in_turns>4752</age_in_turns>
+            </forest>
         </objects>
     </cell>
     <cell pos_x="13" pos_y="10">
@@ -3351,7 +3360,10 @@
     <cell pos_x="11" pos_y="11">
         <terrain>grassland</terrain>
         <objects>
-            <forest/>
+            <forest>
+                <density>100</density>
+                <age_in_turns>48000</age_in_turns>
+            </forest>
         </objects>
     </cell>
     <cell pos_x="12" pos_y="11">

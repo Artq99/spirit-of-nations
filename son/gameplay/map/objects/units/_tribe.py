@@ -5,7 +5,9 @@ from son.gameplay.map.objects._base import Movable
 
 
 class Tribe(Movable):
-    def __init__(self, resource_manager: ResourceManager) -> None:
+    # TODO args and kwargs can be replaced with xml node argument later. see _forest.py
+    # noinspection PyUnusedLocal
+    def __init__(self, resource_manager: ResourceManager, *args, **kwargs) -> None:
         super().__init__("Tribe")
         self._surface = resource_manager.get_resource("unit.tribe")
 
