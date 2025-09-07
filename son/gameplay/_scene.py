@@ -1,8 +1,9 @@
 import pygame.event
 from pygame import Surface
 from pygame.event import Event
+from pygame.locals import *
 
-from son.core.events import END_TURN, START_TURN
+from son.core.events import END_TURN, START_TURN, PAUSE
 from son.core.resources import ResourceManager, DataPath
 from son.core.scenes import SceneBase
 from son.core.utils.decorators import override
@@ -63,6 +64,11 @@ class SceneGameplay(SceneBase):
 
         if self._map.handle_event(event, *args, **kwargs):
             return True
+
+        # Key bindings
+
+        if event.type == KEYDOWN and event.key == K_ESCAPE:
+            pygame.event.post(Event(PAUSE))
 
         return False
 

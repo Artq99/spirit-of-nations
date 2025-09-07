@@ -1,9 +1,10 @@
 from pygame.event import Event
 
-from son.core.events import SHOW_CELL_INFO, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO
+from son.core.events import SHOW_CELL_INFO, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO, PAUSE
 from son.core.ui.controller import UIController
 from son.core.utils.decorators import override
 from son.gameplay.ui._cell_info_controller import UICellInfoController
+from son.gameplay.ui._pause_menu_controller import UIPauseMenuController
 from son.gameplay.ui._top_bar_controller import UITopBarController
 from son.gameplay.ui._unit_info_controller import UIUnitInfoController
 
@@ -20,11 +21,13 @@ class UIGameplayController(UIController):
         super().__init__()
 
         # Subcontrollers
+        self._pause_menu_controller = UIPauseMenuController(self)
         self._top_bar_controller = UITopBarController(self)
         self._cell_info_controller = UICellInfoController(self)
         self._unit_info_controller = UIUnitInfoController(self)
 
         # Add subcontrollers to the list
+        self._subcontrollers.append(self._pause_menu_controller)
         self._subcontrollers.append(self._top_bar_controller)
         self._subcontrollers.append(self._cell_info_controller)
         self._subcontrollers.append(self._unit_info_controller)
@@ -52,5 +55,8 @@ class UIGameplayController(UIController):
         if event.type == SHOW_CELL_INFO:
             self._cell_info_controller.show_box(event.cell_info, event.pos)
             return True
+
+        if event.type == PAUSE:
+            self._pause_menu_controller.show_pause_menu()
 
         return False
