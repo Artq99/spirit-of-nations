@@ -1,6 +1,6 @@
 from pygame.event import Event
 
-from son.core.events import SHOW_CELL_INFO, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO, PAUSE
+from son.core.events import SHOW_CELL_INFO, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO, PAUSE, UNPAUSE
 from son.core.ui.controller import UIController
 from son.core.utils.decorators import override
 from son.gameplay.ui._cell_info_controller import UICellInfoController
@@ -58,5 +58,8 @@ class UIGameplayController(UIController):
 
         if event.type == PAUSE:
             self._pause_menu_controller.show_pause_menu()
+
+        if event.type == UNPAUSE:
+            self._pause_menu_controller.hide_pause_menu()
 
         return False

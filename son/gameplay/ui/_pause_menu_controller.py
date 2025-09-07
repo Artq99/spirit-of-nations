@@ -1,7 +1,11 @@
 from typing import Optional
 
+import pygame.event
+from pygame.event import Event
+
+from son.core.events import UNPAUSE
 from son.core.ui.controller import UISubcontroller, UIController
-from son.core.ui.widgets import Box, Label
+from son.core.ui.widgets import Box, Label, Button
 
 
 class UIPauseMenuController(UISubcontroller):
@@ -29,6 +33,13 @@ class UIPauseMenuController(UISubcontroller):
         label_title.pos = (0, 0)
         box.add_widget(label_title)
 
+        # Button: return
+        button_return = Button()
+        button_return.text = "Return"
+        button_return.pos = (0, label_title.rect.bottom + 5)
+        button_return.register_on_click(UIPauseMenuController._button_return_on_click)
+        box.add_widget(button_return)
+
         return box
 
     def show_pause_menu(self) -> None:
@@ -40,3 +51,7 @@ class UIPauseMenuController(UISubcontroller):
     def hide_pause_menu(self) -> None:
         if self._box in self._owner.widgets:
             self._owner.remove_widget(self._box)
+
+    @staticmethod
+    def _button_return_on_click():
+        pygame.event.post(Event(UNPAUSE))

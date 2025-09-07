@@ -1,7 +1,7 @@
 import pygame.event
 
 PAUSE = pygame.event.custom_type()
-UPAUSE = pygame.event.custom_type()
+UNPAUSE = pygame.event.custom_type()
 SCENE_FINISHED = pygame.event.custom_type()
 EDGE_SCROLL = pygame.event.custom_type()
 SHOW_CELL_INFO = pygame.event.custom_type()
