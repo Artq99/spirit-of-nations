@@ -25,8 +25,6 @@ class UIPauseMenuController(UISubcontroller):
 
     def _create_box(self) -> Box:
         box = Box()
-        # TODO make it apper in a reasonable position
-        box.pos = (100, 100)
 
         # Label: pause menu title
         label_title = Label()
@@ -47,6 +45,12 @@ class UIPauseMenuController(UISubcontroller):
         button_exit.pos = (0, button_return.rect.bottom + 5)
         button_exit.register_on_click(UIPauseMenuController._button_exit_on_click)
         box.add_widget(button_exit)
+
+        screen_size = pygame.display.get_window_size()
+        pos_x = (screen_size[0] / 2) - (box.rect.width / 2)
+        pos_y = (screen_size[1] / 2) - (box.rect.height / 2)
+
+        box.pos = (pos_x, pos_y)
 
         return box
 
