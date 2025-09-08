@@ -1,8 +1,9 @@
-import pygame.event
+import pygame
 
 PAUSE = pygame.event.custom_type()
 UNPAUSE = pygame.event.custom_type()
 SCENE_FINISHED = pygame.event.custom_type()
+NOTIFY = pygame.event.custom_type()
 EDGE_SCROLL = pygame.event.custom_type()
 SHOW_CELL_INFO = pygame.event.custom_type()
 SHOW_MAP_OBJECT_INFO = pygame.event.custom_type()

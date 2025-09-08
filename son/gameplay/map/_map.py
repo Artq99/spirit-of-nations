@@ -1,8 +1,9 @@
+import pygame.event
 from pygame import Surface
 from pygame.event import Event
 
 from son.core.base import Lifecycle
-from son.core.events import EDGE_SCROLL, SELECT_MAP_OBJECT, MOVE_MAP_OBJECT
+from son.core.events import EDGE_SCROLL, SELECT_MAP_OBJECT, MOVE_MAP_OBJECT, NOTIFY
 from son.core.resources import ResourceManager
 from son.core.utils.decorators import override
 from son.core.vectors import VectorInt2D
@@ -76,7 +77,7 @@ class Map(Lifecycle):
         if event.type == MOVE_MAP_OBJECT:
             if self._selected_object is not None and isinstance(self._selected_object, Movable):
                 if self._selected_object.movement_points == 0:
-                    # TODO Warning should be shown to the player
+                    pygame.event.post(Event(NOTIFY, {"text": "Not enough movement points!"}))
                     return True
                 else:
                     # Calculate the new position and get the new cell object
@@ -85,7 +86,7 @@ class Map(Lifecycle):
 
                     # Check if the selected object has enough movement points
                     if self._selected_object.movement_points < new_cell.stats.movement_cost:
-                        # TODO Warning should be shown to the player
+                        pygame.event.post(Event(NOTIFY, {"text": "Not enough movement points!"}))
                         return True
 
                     # Remove the object from the old cell
