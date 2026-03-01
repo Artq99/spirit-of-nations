@@ -6,7 +6,6 @@ from pygame.locals import *
 from son.core.events import END_TURN, START_TURN, PAUSE
 from son.core.resources import ResourceManager, DataPath
 from son.core.scenes import SceneBase
-from son.core.utils.decorators import override
 from son.gameplay._edge_scrolling import EdgeScrollingController
 from son.gameplay._turn_tracking import TurnTracker
 from son.gameplay.map import Map
@@ -36,19 +35,16 @@ class SceneGameplay(SceneBase):
         info = self._turn_tracker.turn_info
         pygame.event.post(Event(START_TURN, {"info": info}))
 
-    @override
     def pre_update(self, *args, **kwargs) -> None:
         self._ui_controller.pre_update(*args, **kwargs)
         self._edge_scrolling_controller.pre_update(*args, **kwargs)
         self._map.pre_update(*args, **kwargs)
 
-    @override
     def update(self, *args, **kwargs) -> None:
-        self._ui_controller.update(focused_cell_info=self._map.info.focused_cell_info)
+        self._ui_controller.update(*args, **kwargs, focused_cell_info=self._map.info.focused_cell_info)
         self._edge_scrolling_controller.update(*args, **kwargs)
         self._map.update(*args, **kwargs)
 
-    @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
         if event.type == END_TURN:
             self._turn_tracker.skip_turn()

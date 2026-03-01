@@ -2,7 +2,6 @@ from pygame.event import Event
 
 from son.core.events import SHOW_CELL_INFO, SHOW_MAP_OBJECT_INFO, HIDE_MAP_OBJECT_INFO, PAUSE, UNPAUSE, NOTIFY
 from son.core.ui.controller import UIController
-from son.core.utils.decorators import override
 from son.gameplay.ui._cell_info_controller import UICellInfoController
 from son.gameplay.ui._notifications_controller import UINotificationsController
 from son.gameplay.ui._pause_menu_controller import UIPauseMenuController
@@ -35,13 +34,13 @@ class UIGameplayController(UIController):
         self._subcontrollers.append(self._cell_info_controller)
         self._subcontrollers.append(self._unit_info_controller)
 
-    @override
     def handle_event(self, event: Event, *args, **kwargs) -> bool:
         if super().handle_event(event, *args, **kwargs):
             return True
 
         if event.type == NOTIFY:
             self._notifications_controller.add_notification(event.text)
+            return True
 
         # A map object has been selected - we show the info panel.
         # TODO For now only one kind of info box can be shown - unit info.
